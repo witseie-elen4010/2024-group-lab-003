@@ -21,6 +21,11 @@ router.get('/join', (req, res) => {
   res.sendFile(path.join(viewsPath, 'join.html'))
 })
 
+// Draw Page
+router.get('/drawing', (req, res) => {
+  res.sendFile(path.join(viewsPath, 'drawing.html'))
+})
+
 // Waiting Room Page
 router.get('/waitingRoom', (req, res) => {
   res.sendFile(path.join(viewsPath, 'waitingRoom.html'));
