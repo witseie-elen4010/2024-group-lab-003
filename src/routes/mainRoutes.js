@@ -21,4 +21,9 @@ router.get('/join', (req, res) => {
   res.sendFile(path.join(viewsPath, 'join.html'))
 })
 
+// Draw Page
+router.get('/drawing', (req, res) => {
+  res.sendFile(path.join(viewsPath, 'drawing.html'))
+})
+
 module.exports = router
