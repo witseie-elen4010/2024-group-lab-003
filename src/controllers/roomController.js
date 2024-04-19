@@ -42,10 +42,6 @@ async function createRoom (req, res) {
   }
 }
 
-module.exports = {
-  createRoom
-}
-const { User, Room } = require('../schemas/dbSchema');
 
 // Function to join a room
 async function joinRoom(req, res) {
@@ -90,5 +86,6 @@ async function checkRoom(req, res) {
 
 module.exports = {
     joinRoom,
-    checkRoom
+    checkRoom,
+    createRoom
 };
