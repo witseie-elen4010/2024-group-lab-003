@@ -1,6 +1,18 @@
 const express = require('express')
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+require('dotenv').config()
+const roomRoutes = require('./src/routes/dbRoutes.js')
+
 const app = express()
-const PORT = 3000
+app.use(bodyParser.json())
+app.use('/api', roomRoutes)
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => console.log('MongoDB connection error:', err))
+
+const PORT = process.env.PORT || 3000
 
 // Import the routes from the mainRoutes.js file located in the src/routes directory
 const routes = require('./src/routes/mainRoutes.js')
