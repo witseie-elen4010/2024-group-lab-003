@@ -1,36 +1,39 @@
-function joinClicked (roomCode, nickname) {
-  if (roomCode.trim() === '' || nickname.trim() === '') {
-    window.alert('Please fill in all fields.')
-    return
-  }
-  // When email login is implemented this is removed
-  const email = `user_${new Date().getTime()}@example.com` // Generates a unique email
-  const password = 'defaultPassword123' // Temporary password
+function joinClicked(username, gamecode) {
+    // Simple validation check
+    if (username.trim() === '' || gamecode.trim() === '') {
+        alert('Please fill in all fields.');
+        return;
+    }
 
-  fetch('/api/join-room', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password, roomCode, nickname })
-  })
+    // Make a request to your server to join the room with the given code
+    fetch('/api/join-room', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: username, roomCode: gamecode })
+    })
     .then(response => response.json())
     .then(data => {
-      if (data.success) {
-        // Passing the room code as a URL parameter
-        window.location.href = `/waitingRoom?roomCode=${encodeURIComponent(roomCode)}`
-      } else {
-        window.alert(data.message)
-      }
+        
+        // Check if the join was successful
+        if (data.success) {
+            // Redirect to the waiting_room page upon successful joining
+            window.location.href = '/waitingRoom';
+        } else {
+            // Display an error message if joining was not successful
+            alert(data.message);
+        }
     })
     .catch(error => {
-      console.error('Error:', error)
-      window.alert('Error joining room. Please try again.')
-    })
+        // Handle any errors that occurred during the fetch request
+        console.error('Error:', error);
+    });
 }
 
-document.getElementById('joinRoom').addEventListener('click', function () {
-  const roomCode = document.getElementById('roomCode').value
-  const nickname = document.getElementById('nickname').value
-  joinClicked(roomCode, nickname)
-})
+// Event listener for the join game button click
+document.getElementById('joinGame').addEventListener('click', function() {
+    const username = document.getElementById('username').value;
+    const gamecode = document.getElementById('gamecode').value;
+    joinClicked(username, gamecode);
+});
