@@ -53,7 +53,3 @@ Effective code reviews are crucial for maintaining high-quality code. This guide
 - Documentation: Approved (All relevant documentation has been updated.)
 
 *Guide adapted from [Google Engineering Practices](https://google.github.io/eng-practices/review/).*
-
-
-**References**
-- https://google.github.io/eng-practices/review/
