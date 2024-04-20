@@ -32,4 +32,6 @@ The best reviewer is the person who will be able to give you the most thorough a
 - Style: Approved
 - Documentation: Approved. ADRS were updated
 
-Obtained from https://google.github.io/eng-practices/review/
+
+**References**
+- https://google.github.io/eng-practices/review/

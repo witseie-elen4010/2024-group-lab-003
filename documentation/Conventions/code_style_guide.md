@@ -33,4 +33,5 @@ This guide follows the Javascript Standard style guide and the appropriate exten
 - Use slashes for comments
 - Use slashes for both single line and multi line comments. Try to write comments that explain higher level mechanisms or clarify difficult segments of your code. Don't use comments to restate trivial things.
 
-Information obtained from here https://standardjs.com/
+**References**
+- https://standardjs.com/

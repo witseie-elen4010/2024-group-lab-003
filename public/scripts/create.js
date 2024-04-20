@@ -1,23 +1,70 @@
-// Function to handle the room creation logic when the "Create" button is clicked
-function createClicked (username) {
-  const isAdmin = false // Set based on your application's logic for identifying admin users
+// // Function to handle the room creation logic when the "Create" button is clicked
+// function createClicked (nickname) {
+//   // When email login is implemented this is removed
+//   const email = `user_${new Date().getTime()}@example.com` // Generates a unique email
+//   const password = 'defaultPassword123' // Temporary password
 
-  // Make a POST request to the server to create a room
+//   fetch('/api/create-room', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({ email, password, nickname })
+//   })
+//     .then(response => {
+//       if (response.ok) {
+//         return response.json() // Only parse JSON if response is OK
+//       } else {
+//         throw new Error('Failed to create room')
+//       }
+//     })
+//     .then(data => {
+//       window.alert(`Room created successfully! Code: ${data.roomCode}`)
+//       window.location.href = `/waitingRoom?roomCode=${encodeURIComponent(data.roomCode)}`
+//     })
+//     .catch(error => {
+//       console.error('Error creating room:', error)
+//       window.alert('Error creating room. Please try again.')
+//     })
+// }
+
+// document.getElementById('create').addEventListener('click', () => {
+//   const nickname = document.getElementById('nickname').value
+//   if (nickname.trim() === '') {
+//     window.alert('Please enter a nickname.')
+//   } else {
+//     createClicked(nickname)
+//   }
+// })
+
+// Function to handle the room creation logic when the "Create" button is clicked
+function createClicked (nickname) {
+  const email = `user_${new Date().getTime()}@example.com` // Generates a unique email
+  const password = 'defaultPassword123' // Temporary password
+
   fetch('/api/create-room', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ username, isAdmin })
+    body: JSON.stringify({ email, password, nickname })
   })
-    .then(response => response.json())
-    .then(data => {
-      // Handle the response from the server
-      if (data.roomCode) {
-        window.alert(`Room created successfully! Code: ${data.roomCode}`)
+    .then(response => {
+      if (response.ok) {
+        return response.json() // Only parse JSON if response is OK
       } else {
-        window.alert('Failed to create room.')
+        throw new Error('Failed to create room')
       }
+    })
+    .then(data => {
+      const gameCodeP = document.getElementById('gameCode')
+      const codeSpan = document.getElementById('code')
+      codeSpan.textContent = data.roomCode
+      gameCodeP.style.display = 'block' // Display the game code
+
+      setTimeout(() => { // Redirect after 3 seconds
+        window.location.href = `/waitingRoom?roomCode=${encodeURIComponent(data.roomCode)}`
+      }, 0)
     })
     .catch(error => {
       console.error('Error creating room:', error)
@@ -25,12 +72,11 @@ function createClicked (username) {
     })
 }
 
-// Add event listener to the "Create" button
 document.getElementById('create').addEventListener('click', () => {
-  const username = document.getElementById('username').value
-  if (username.trim() === '') {
-    window.alert('Please enter a username.')
+  const nickname = document.getElementById('nickname').value
+  if (nickname.trim() === '') {
+    window.alert('Please enter a nickname.')
   } else {
-    createClicked(username)
+    createClicked(nickname)
   }
 })
