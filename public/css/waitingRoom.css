@@ -1,0 +1,49 @@
+
+/* Custom styles */
+.full-height {
+    min-height: 100vh; /* Full screen height */
+}
+.flex-column-between {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+#leaveButton {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+#playersHeader {
+    margin-bottom: 1rem;
+}
+#membersListContainer {
+    flex-grow: 1; /* Grow to use all available space */
+    overflow-y: auto; /* Allows scrolling if list is too long */
+    border: 2px solid #007bff; /* Adds a blue border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 1rem; /* Adds padding inside the border */
+    margin-bottom: 1rem; /* Adds space below the container */
+}
+.main-content-header, .main-content-footer {
+    padding: 1rem;
+    text-align: center;
+}
+#settingsView {
+    flex-grow: 1; /* Grow to use all available space */
+    border: 1px solid #ddd;
+    margin: 1rem 0;
+    padding: 1rem;
+}
+.scrollable-list {
+    overflow-y: auto;
+    padding-bottom: 1rem;
+}
+.list-group-item {
+    border: none; /* Removes borders from list items */
+}
+.empty-slot {
+    height: 50px; /* Height for empty slots to create space */
+}
+.spinner-border {
+    margin-bottom: 0.5rem;
+}
