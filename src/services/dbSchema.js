@@ -7,14 +7,17 @@ const userSchema = new mongoose.Schema({
 
 const roomSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true },
-  createTime: { type: Date, default: Date.now }
+  createTime: { type: Date, default: Date.now },
+  hasStarted: { type: Boolean, default: false } // Default value set to false
 })
 
 const roomPlayerSchema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  nickname: { type: String, required: true }
+  nickname: { type: String, required: true },
+  isAdmin: { type: Boolean, required: true, default: false } // Default value set to false
 })
+
 
 const roundSchema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
