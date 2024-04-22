@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     startGameButton.id = 'startGameButton'
     startGameButton.classList.add('btn', 'btn-primary')
     startGameButton.style.position = 'absolute'
-    startGameButton.style.bottom = '1rem'
+    startGameButton.style.top = '1rem'
     startGameButton.style.right = '1rem'
     document.body.appendChild(startGameButton)
 
