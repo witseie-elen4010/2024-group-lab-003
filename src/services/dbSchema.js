@@ -18,7 +18,6 @@ const roomPlayerSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, required: true, default: false } // Default value set to false
 })
 
-
 const roundSchema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
   roundNumber: { type: Number, required: true }
