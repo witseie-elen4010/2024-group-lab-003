@@ -2,7 +2,7 @@ const canvas = document.getElementById('drawingCanvas')
 const ctx = canvas.getContext('2d')
 
 // Set up the default pen color and width
-const penColor = '#000000'
+let penColor = '#000000'
 const penWidth = 5 // Default line width
 let painting = false // This should be defined to keep track of painting state
 
@@ -42,6 +42,15 @@ function draw (e) {
   ctx.beginPath() // Start a new path after drawing the line
   ctx.moveTo(x, y)
 }
+
+function changeColor (color) {
+  penColor = color
+}
+// Color picker change event
+const colorPicker = document.getElementById('colorPicker')
+colorPicker.addEventListener('change', function () {
+  changeColor(this.value)
+})
 
 window.addEventListener('resize', resizeCanvas)
 
