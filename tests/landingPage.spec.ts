@@ -1,7 +1,7 @@
 import { test, expect, chromium } from '@playwright/test'
 
 test('Landing page appears and can route to create and join', async ({ page }) => {
-  const browser = await chromium.launch({ headless: false }) // Launch the browser in non-headless mode
+  const browser = await chromium.launch({ headless: true }) // Launch the browser in non-headless mode
   const context = await browser.newContext()
   page = await context.newPage()
   await page.goto('http://localhost:3000/')

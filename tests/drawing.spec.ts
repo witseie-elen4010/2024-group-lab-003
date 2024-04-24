@@ -1,7 +1,7 @@
 import { test, chromium } from '@playwright/test'
 
 test('drawing page appears and user can draw', async ({ page }) => {
-  const browser = await chromium.launch({ headless: false }) // Launch the browser in non-headless mode
+  const browser = await chromium.launch({ headless: true }) // Launch the browser in non-headless mode
   const context = await browser.newContext()
   page = await context.newPage()
   await page.goto('http://localhost:3000/drawing')

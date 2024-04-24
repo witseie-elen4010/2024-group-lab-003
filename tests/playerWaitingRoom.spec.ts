@@ -1,7 +1,7 @@
 import { test, expect, chromium } from '@playwright/test'
 
 test('Regular Players Waiting Room Has A Waiting For Admin Buffer and Does Not Have A Start Button', async ({ page }) => {
-  const browser = await chromium.launch({ headless: false }) // Launch the browser in non-headless mode
+  const browser = await chromium.launch({ headless: true }) // Launch the browser in non-headless mode
   const context = await browser.newContext()
   page = await context.newPage()
   await page.goto('http://localhost:3000/')
@@ -15,7 +15,7 @@ test('Regular Players Waiting Room Has A Waiting For Admin Buffer and Does Not H
 })
 
 test('For an Admin Player, the start button appears', async ({ page }) => {
-  const browser = await chromium.launch({ headless: false }) // Launch the browser in non-headless mode
+  const browser = await chromium.launch({ headless: true }) // Launch the browser in non-headless mode
   const context = await browser.newContext()
   page = await context.newPage()
   await page.goto('http://localhost:3000/')
@@ -27,7 +27,7 @@ test('For an Admin Player, the start button appears', async ({ page }) => {
 })
 
 test('When the admin player starts the game, the drawing page appears', async ({ page }) => {
-  const browser = await chromium.launch({ headless: false }) // Launch the browser in non-headless mode
+  const browser = await chromium.launch({ headless: true }) // Launch the browser in non-headless mode
   const context = await browser.newContext()
   page = await context.newPage()
   await page.goto('http://localhost:3000/')
