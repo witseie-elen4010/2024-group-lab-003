@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "1. Yishai Basserabie\r 2. Akiva Levitt\r 3. Jacob Sacks",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+  ,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/witseie-elen4010/2024-group-lab-003.git"
@@ -25,4 +29,5 @@
     "@types/node": "^20.12.7",
     "standard": "^17.1.0"
   }
+  
 }
