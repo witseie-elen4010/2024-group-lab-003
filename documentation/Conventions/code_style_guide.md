@@ -38,6 +38,7 @@ This guide provides comprehensive guidelines for writing clean, consistent, and 
 - Opening braces go on the same line as the statement.
 - Declare one variable per statement, which makes it easier to re-order the lines. Place variable declarations at the top of their respective scopes for clarity.
 
+
 ## Naming Conventions
 - **Variables and Functions**: Should be descriptive and use `lowerCamelCase`. Avoid single character variables and uncommon abbreviations.
 - **Class Names**: Should be capitalized using `UpperCamelCase`.
