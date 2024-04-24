@@ -1,31 +1,17 @@
-// import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
-// test('Regular Players Waiting Room Has A Waiting For Admin Buffer and Does Not Have A Start Button', async ({ page }) => {
-//   await page.goto('http://localhost:3000/')
-//   await page.getByRole('button', { name: 'Join' }).click()
-//   await page.getByPlaceholder('Enter your nickname').click()
-//   await page.getByPlaceholder('Enter your nickname').fill('Tree')
-//   await page.getByPlaceholder('Enter game code').click()
-//   await page.getByPlaceholder('Enter game code').fill('paQmhP')
-//   await page.getByRole('button', { name: 'Join Game' }).click()
-//   await expect(page.locator('div').filter({ hasText: 'Waiting for the admin to' }).nth(3)).toBeVisible()
-// })
+test('Waiting Room Page - Verify Navigation and URL Parameters', async ({ page }) => {
+  await page.goto('http://localhost:3000/waitingRoom?roomCode=h7D8fT&userId=6629642d4aa81461da6042fe')
+  await expect(page.url()).toContain('roomCode=h7D8fT')
+  await expect(page.url()).toContain('userId=6629642d4aa81461da6042fe')
+})
 
-// test('For an Admin Player, the start button appears', async ({ page }) => {
-//   await page.goto('http://localhost:3000/')
-//   await page.getByRole('button', { name: 'Create' }).click()
-//   await page.getByPlaceholder('Enter your nickname').click()
-//   await page.getByPlaceholder('Enter your nickname').fill('Test')
-//   await page.getByRole('button', { name: 'Create Room' }).click()
-//   await expect(page.getByRole('button', { name: 'Start Game' })).toBeVisible()
-// })
+test('Waiting Room Page - Verify Room Code Visibility', async ({ page }) => {
+  await page.goto('http://localhost:3000/waitingRoom?roomCode=h7D8fT&userId=6629642d4aa81461da6042fe')
+  await expect(page.getByRole('heading', { name: 'Room Code: h7D8fT' })).toBeVisible()
+})
 
-// test('When the admin player starts the game, the drawing page appears', async ({ page }) => {
-//   await page.goto('http://localhost:3000/')
-//   await page.getByRole('button', { name: 'Create' }).click()
-//   await page.getByPlaceholder('Enter your nickname').click()
-//   await page.getByPlaceholder('Enter your nickname').fill('Test')
-//   await page.getByRole('button', { name: 'Create Room' }).click()
-//   await page.getByRole('button', { name: 'Start Game' }).click()
-//   await expect(page.locator('#drawingCanvas')).toBeVisible()
-// })
+test('Waiting Room Page - Verify Players Heading Visibility', async ({ page }) => {
+  await page.goto('http://localhost:3000/waitingRoom?roomCode=h7D8fT&userId=6629642d4aa81461da6042fe')
+  await expect(page.getByRole('heading', { name: 'Players' })).toBeVisible()
+})
