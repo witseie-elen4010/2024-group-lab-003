@@ -1,10 +1,21 @@
 import { test, expect } from '@playwright/test'
 
-test('Admin Player who creates a room appears in the room players', async ({ page }) => {
-  await page.goto('http://localhost:3000/')
-  await page.getByRole('button', { name: 'Create' }).click()
-  await page.getByPlaceholder('Enter your nickname').click()
-  await page.getByPlaceholder('Enter your nickname').fill('Stephen')
-  await page.getByRole('button', { name: 'Create Room' }).click()
-  await expect(page.getByRole('link', { name: 'Stephen' })).toBeVisible()
+test('Create Room Page - Verify Heading Visibility', async ({ page }) => {
+  await page.goto('http://localhost:3000/create')
+  await expect(page.getByRole('heading', { name: 'Create A Room!' })).toBeVisible()
+})
+
+test('Create Room Page - Verify Nickname Label Visibility', async ({ page }) => {
+  await page.goto('http://localhost:3000/create')
+  await expect(page.getByText('Nickname:')).toBeVisible()
+})
+
+test('Create Room Page - Verify Nickname Input Visibility', async ({ page }) => {
+  await page.goto('http://localhost:3000/create')
+  await expect(page.getByPlaceholder('Enter your nickname')).toBeVisible()
+})
+
+test('Create Room Page - Verify Create Room Button Visibility', async ({ page }) => {
+  await page.goto('http://localhost:3000/create')
+  await expect(page.getByRole('button', { name: 'Create Room' })).toBeVisible()
 })

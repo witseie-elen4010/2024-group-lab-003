@@ -18,7 +18,7 @@ function joinClicked (roomCode, nickname) {
     .then(data => {
       if (data.success) {
         // Passing the room code as a URL parameter
-        window.location.href = `/waitingRoom?roomCode=${encodeURIComponent(roomCode)}`
+        window.location.href = `/waitingRoom?roomCode=${encodeURIComponent(roomCode)}&userId=${encodeURIComponent(data.userId)}`
       } else {
         window.alert(data.message)
       }
