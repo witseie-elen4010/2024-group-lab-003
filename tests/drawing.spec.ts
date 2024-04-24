@@ -48,3 +48,14 @@ test('Drawing Page - Draw Line Slightly Up', async ({ page }) => {
   })
   // Verify a subtle upward stroke completes this segment.
 })
+
+test('Drawing Page - Save Image', async ({ page }) => {
+  await page.goto('http://localhost:3000/drawing')
+  await expect(page.getByRole('button', { name: 'Save Drawing' })).toBeVisible()
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 478,
+      y: 135
+    }
+  })
+})
