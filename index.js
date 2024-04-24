@@ -8,7 +8,14 @@ const app = express()
 app.use(bodyParser.json())
 app.use('/api', roomRoutes)
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.set('bufferCommands', false)
+
+// Connect to MongoDB with additional options
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000 // Increase timeout to 30 seconds
+})
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.log('MongoDB connection error:', err))
 
