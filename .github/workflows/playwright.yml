@@ -4,7 +4,6 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
- 
 jobs:
   test:
     timeout-minutes: 60
@@ -18,15 +17,6 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Start server
-      run: npm start &
-    - name: Wait for server to be ready
-      run: |
-        for i in {1..10}; do
-          nc -zv localhost 3000 && echo "Server is up" && break
-          echo "Waiting for server to start"
-          sleep 3
-        done
     - name: Run Playwright tests
       run: npx playwright test
     - uses: actions/upload-artifact@v4
