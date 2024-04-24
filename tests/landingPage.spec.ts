@@ -1,12 +1,18 @@
-import { test, expect, chromium } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
 test('Landing page appears and can route to create and join', async ({ page }) => {
-  const browser = await chromium.launch({ headless: true }) // Launch the browser in non-headless mode
-  const context = await browser.newContext()
-  page = await context.newPage()
-  await page.goto('http://localhost:3000/')
-  await page.getByRole('button', { name: 'Create' }).click()
-  await page.goto('http://localhost:3000/')
-  await page.getByRole('button', { name: 'Join' }).click()
-  // await expect(page.getByRole('heading', { name: 'Join Game' })).toBeVisible()
-})
+  // Navigate to the home page
+  await page.goto('http://localhost:3000/');
+  // Wait for the 'Create' button to be visible and clickable
+  await expect(page.getByRole('button', { name: 'Create' })).toBeVisible();
+  await page.getByRole('button', { name: 'Create' }).click();
+
+  // Navigate back to the home page
+  await page.goto('http://localhost:3000/');
+  // Wait for the 'Join' button to be visible and clickable
+  await expect(page.getByRole('button', { name: 'Join' })).toBeVisible();
+  await page.getByRole('button', { name: 'Join' }).click();
+
+  // Check if the heading on the join page is visible
+  await expect(page.getByRole('heading', { name: 'Join Game' })).toBeVisible();
+});
