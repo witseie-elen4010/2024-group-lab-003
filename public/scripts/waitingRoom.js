@@ -144,9 +144,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Initial fetch of players
   fetchPlayers()
-  // Periodically update player list every 3 seconds
-  setInterval(fetchPlayers, 3000)
+  // Periodically update player list every 0.3 seconds
+  setInterval(fetchPlayers, 500)
   setInterval(async () => {
     await checkIfRoomHasStarted(roomId)
-  }, 3000)
+  }, 500)
 })

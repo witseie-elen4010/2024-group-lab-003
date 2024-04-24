@@ -8,9 +8,14 @@ const app = express()
 app.use(bodyParser.json())
 app.use('/api', roomRoutes)
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // Timeout after 30 seconds
+  socketTimeoutMS: 45000 // Close sockets after 45 seconds of inactivity
+})
   .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.log('MongoDB connection error:', err))
+  .catch(err => console.log('MongoDB connection error:', err));
 
 const PORT = process.env.PORT || 3000
 
