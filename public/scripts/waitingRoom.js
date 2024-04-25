@@ -94,6 +94,28 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
   }
 
+  const leaveRoomButton = document.getElementById('leaveRoomButton')
+  leaveRoomButton.addEventListener('click', function () {
+    fetch(`/api/remove-player-from-room-by-user-id/${userId}`, {
+      method: 'POST'
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json() // Parsing the JSON response if successful
+        } else {
+          throw new Error('Failed to leave game') // Throw error if response not OK
+        }
+      })
+      .then(data => {
+        window.location.href = '/'
+      })
+      .catch(error => {
+        console.error('Error leaving game:', error)
+        // Optionally inform the user of the failure to start the game
+        window.alert('Failed to leave the game. Please try again.')
+      })
+  })
+
   async function fetchPlayers () {
     try {
       const response = await fetch(`/api/get-room-players?code=${roomCode}`)

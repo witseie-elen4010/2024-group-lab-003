@@ -208,6 +208,31 @@ async function checkRoomStarted (req, res) {
   }
 }
 
+// Function to remove a player from a room by user ID
+async function removePlayerFromRoomByID (req, res) {
+  const { userID } = req.params // Extract the user ID from request parameters
+
+  try {
+    // Find the RoomPlayer by user ID and remove it
+    const removePlayer = await RoomPlayer.findOneAndDelete({ user: userID })
+
+    if (!removePlayer) {
+      return res.status(404).json({ success: false, message: 'Room Player not found' })
+    }
+
+    // Respond with success
+    res.json({
+      success: true,
+      message: 'Player removed'
+      // If you need to return the updated room, make sure it's fetched and included here
+      // room: updatedRoom (ensure this variable is defined and contains the updated room info if needed)
+    })
+  } catch (error) {
+    console.error('Error Removing Player:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -215,5 +240,6 @@ module.exports = {
   getRoomIdByCode,
   isUserAdmin,
   startRoom,
-  checkRoomStarted
+  checkRoomStarted,
+  removePlayerFromRoomByID
 }
