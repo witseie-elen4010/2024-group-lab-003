@@ -43,6 +43,14 @@ function draw (e) {
   ctx.moveTo(x, y)
 }
 
+document.getElementById('save').addEventListener('click', function () {
+  const dataUrl = canvas.toDataURL('image/png')
+  const link = document.createElement('a')
+  link.download = 'my-drawing.png'
+  link.href = dataUrl
+  link.click()
+})
+
 window.addEventListener('resize', resizeCanvas)
 
 function resizeCanvas () {
