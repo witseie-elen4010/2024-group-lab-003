@@ -31,4 +31,9 @@ router.get('/waitingRoom', (req, res) => {
   res.sendFile(path.join(viewsPath, 'waitingRoom.html'))
 })
 
+// Description Page
+router.get('/description', (req, res) => {
+  res.sendFile(path.join(viewsPath, 'description.html'))
+})
+
 module.exports = router
