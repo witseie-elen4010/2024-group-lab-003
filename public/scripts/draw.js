@@ -51,6 +51,10 @@ document.getElementById('save').addEventListener('click', function () {
   link.click()
 })
 
+document.getElementById('submitDrawing').addEventListener('click', function () {
+  document.body.innerHTML = '' // Clears everything in the <body> element
+})
+
 window.addEventListener('resize', resizeCanvas)
 
 function resizeCanvas () {

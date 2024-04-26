@@ -146,7 +146,10 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (data.success) {
         if (data.hasStarted) {
           clearInterval(checkRoomInterval) // Stop checking if the room has started
-          window.location.href = '/drawing' // Example redirect
+
+          // Randomly choose between /drawing and /description
+          const nextPage = Math.random() < 0.5 ? '/drawing' : '/description'
+          window.location.href = nextPage
         }
       } else {
         console.error('Failed to get room started status:', data.message)
