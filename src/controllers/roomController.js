@@ -210,11 +210,11 @@ async function checkRoomStarted (req, res) {
 
 // Function to remove a player from a room by user ID
 async function removePlayerFromRoomByID (req, res) {
-  const { userID } = req.params // Extract the user ID from request parameters
+  const { userID, roomID } = req.params // Extract the user ID from request parameters
 
   try {
     // Find the RoomPlayer by user ID and remove it
-    const removePlayer = await RoomPlayer.findOneAndDelete({ user: userID })
+    const removePlayer = await RoomPlayer.findOneAndDelete({ user: userID, room: roomID })
 
     if (!removePlayer) {
       return res.status(404).json({ success: false, message: 'Room Player not found' })
@@ -224,11 +224,56 @@ async function removePlayerFromRoomByID (req, res) {
     res.json({
       success: true,
       message: 'Player removed'
-      // If you need to return the updated room, make sure it's fetched and included here
-      // room: updatedRoom (ensure this variable is defined and contains the updated room info if needed)
     })
   } catch (error) {
     console.error('Error Removing Player:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+// Function to remove a player from a room by nickname
+async function removePlayerFromRoomByNickname (req, res) {
+  const { userNickname, roomID } = req.params // Extract the user nickname from request parameters
+
+  try {
+    // Find the RoomPlayer by user ID and remove it
+    const removePlayer = await RoomPlayer.findOneAndDelete({ nickname: userNickname, room: roomID })
+
+    if (!removePlayer) {
+      return res.status(404).json({ success: false, message: 'Room Player not found' })
+    }
+
+    // Respond with success
+    res.json({
+      success: true,
+      message: 'Player removed'
+    })
+  } catch (error) {
+    console.error('Error Removing Player:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+async function userIsInRoom (req, res) {
+  const { userID, roomID } = req.params // Assuming the room ID and userID are passed as URL parameters
+
+  try {
+    // Attempt to find the room based on roomID
+    const room = await Room.findById(roomID).exec() // Using findById to locate the room
+    if (!room) {
+      return res.status(404).json({ success: false, message: 'Room not found' })
+    }
+
+    // Check if the user is in the room
+    const foundPlayer = await RoomPlayer.findOne({ user: userID, room: roomID }).exec() // Using findOne to get a single document
+    if (!foundPlayer) {
+      return res.json({ success: true, inRoom: false, message: 'Player not found in the room' }) // Player not in the room is not an error
+    }
+
+    // If the player is found, respond with the room's status and that the player is in the room
+    res.json({ success: true, inRoom: true, hasStarted: room.hasStarted })
+  } catch (error) {
+    console.error('Error fetching room or player status:', error)
     res.status(500).json({ success: false, message: 'Internal server error' })
   }
 }
@@ -241,5 +286,7 @@ module.exports = {
   isUserAdmin,
   startRoom,
   checkRoomStarted,
-  removePlayerFromRoomByID
+  removePlayerFromRoomByID,
+  removePlayerFromRoomByNickname,
+  userIsInRoom
 }
