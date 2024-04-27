@@ -106,3 +106,18 @@ test('Drawing Page - Undo, Redo and clear buttons', async ({ page }) => {
   await page.getByRole('button', { name: 'Undo' }).click()
   await expect(page.locator('#drawingCanvas')).toBeVisible()
 })
+
+test('Drawing Page - Testing Color Palette', async ({ page }) => {
+  await page.goto('http://localhost:3000/drawing')
+  await expect(page.locator('#colorPicker')).toBeVisible()
+  await page.locator('#colorPicker').click()
+  await page.locator('#colorPicker').fill('#ff0000')
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 91,
+      y: 137
+    }
+  })
+  await expect(page.locator('#colorPicker')).toHaveValue('#ff0000')
+  await page.locator('#colorPicker').click()
+})
