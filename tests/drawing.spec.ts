@@ -111,13 +111,13 @@ test('Drawing Page - Testing Color Palette', async ({ page }) => {
   await page.goto('http://localhost:3000/drawing')
   await expect(page.locator('#colorPicker')).toBeVisible()
   await page.locator('#colorPicker').click()
-  await page.locator('#colorPicker').fill('#ff0000')
+  await page.locator('#colorPicker').fill('#000000')
   await page.locator('#drawingCanvas').click({
     position: {
       x: 91,
       y: 137
     }
   })
-  await expect(page.locator('#colorPicker')).toHaveValue('#ff0000')
+  await expect(page.locator('#colorPicker')).toHaveValue('#000000')
   await page.locator('#colorPicker').click()
 })
