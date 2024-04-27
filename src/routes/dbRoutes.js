@@ -8,6 +8,9 @@ const { getRoomIdByCode } = require('../controllers/roomController')
 const { isUserAdmin } = require('../controllers/roomController')
 const { startRoom } = require('../controllers/roomController')
 const { checkRoomStarted } = require('../controllers/roomController')
+const { removePlayerFromRoomByID } = require('../controllers/roomController')
+const { removePlayerFromRoomByNickname } = require('../controllers/roomController')
+const { userIsInRoom } = require('../controllers/roomController')
 
 router.post('/create-room', createRoom)
 router.post('/join-room', joinRoom)
@@ -16,5 +19,8 @@ router.get('/get-room-id/:code', getRoomIdByCode)
 router.get('/is-user-admin/:roomId/:userId', isUserAdmin)
 router.post('/start-room/:roomId', startRoom)
 router.get('/check-room-started/:roomId', checkRoomStarted)
+router.post('/remove-player-from-room-by-user-id/:userID/:roomID', removePlayerFromRoomByID)
+router.post('/remove-player-from-room-by-user-nickname/:userNickname/:roomID', removePlayerFromRoomByNickname)
+router.get('/user-is-in-room/:roomID/:userID', userIsInRoom)
 
 module.exports = router

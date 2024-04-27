@@ -12,7 +12,9 @@
         <div class="row full-height">
             <!-- Sidebar for players list -->
             <div class="col-md-3 col-sm-12 flex-column-between">
-                <div>
+                <div class="p-3">
+                    <!-- Leave Room button -->
+                    <button class="btn btn-secondary btn-sm mb-2" id="leaveRoomButton">Leave Room</button>
                     <!-- Players heading -->
                     <h5 id="playersHeader">Players</h5>
                 </div>
@@ -41,9 +43,8 @@
         </div>
     </div>
 
-     <!-- Start Game button -->
-     <button id="startGameButton" class="btn btn-primary" style="display: none;">Start Game</button>
-
+    <!-- Start Game button -->
+    <button id="startGameButton" class="btn btn-primary" style="display: none;">Start Game</button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/scripts/waitingRoom.js"></script>

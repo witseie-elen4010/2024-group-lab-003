@@ -59,3 +59,50 @@ test('Drawing Page - Save Image', async ({ page }) => {
     }
   })
 })
+
+test('Drawing Page - Submit image', async ({ page }) => {
+  await page.goto('http://localhost:3000/drawing')
+  await expect(page.getByRole('heading', { name: 'Begin your book by drawing' })).toBeVisible()
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 287,
+      y: 237
+    }
+  })
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 351,
+      y: 241
+    }
+  })
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 328,
+      y: 341
+    }
+  })
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 246,
+      y: 331
+    }
+  })
+  await page.getByRole('button', { name: 'Submit Drawing' }).click()
+  await page.locator('body').click()
+})
+
+test('Drawing Page - Undo, Redo and clear buttons', async ({ page }) => {
+  await page.goto('http://localhost:3000/drawing')
+  await expect(page.getByRole('button', { name: 'Undo' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Redo' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Clear' })).toBeVisible()
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 271,
+      y: 143
+    }
+  })
+  await expect(page.locator('#drawingCanvas')).toBeVisible()
+  await page.getByRole('button', { name: 'Undo' }).click()
+  await expect(page.locator('#drawingCanvas')).toBeVisible()
+})

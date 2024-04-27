@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "playwright test --config=./playwright.config.js"
-    },
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/witseie-elen4010/2024-group-lab-003.git"
@@ -26,6 +26,7 @@
   "devDependencies": {
     "@playwright/test": "^1.43.1",
     "@types/node": "^20.12.7",
+    "jest": "^29.7.0",
     "standard": "^17.1.0"
   }
 }
