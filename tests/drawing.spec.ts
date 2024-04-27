@@ -90,3 +90,19 @@ test('Drawing Page - Submit image', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit Drawing' }).click()
   await page.locator('body').click()
 })
+
+test('Drawing Page - Undo, Redo and clear buttons', async ({ page }) => {
+  await page.goto('http://localhost:3000/drawing')
+  await expect(page.getByRole('button', { name: 'Undo' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Redo' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Clear' })).toBeVisible()
+  await page.locator('#drawingCanvas').click({
+    position: {
+      x: 271,
+      y: 143
+    }
+  })
+  await expect(page.locator('#drawingCanvas')).toBeVisible()
+  await page.getByRole('button', { name: 'Undo' }).click()
+  await expect(page.locator('#drawingCanvas')).toBeVisible()
+})
