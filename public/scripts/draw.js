@@ -2,7 +2,7 @@ const canvas = document.getElementById('drawingCanvas')
 const ctx = canvas.getContext('2d')
 
 // Set up the default pen color and width
-const penColor = '#000000'
+let penColor = '#000000'
 const penWidth = 5
 let painting = false
 let undoStack = []
@@ -51,6 +51,15 @@ function draw (e) {
   ctx.beginPath()
   ctx.moveTo(x, y)
 }
+
+function changeColor (color) {
+  penColor = color
+}
+// Color picker change event
+const colorPicker = document.getElementById('colorPicker')
+colorPicker.addEventListener('change', function () {
+  changeColor(this.value)
+})
 
 document.getElementById('save').addEventListener('click', saveDrawing)
 document.getElementById('undo').addEventListener('click', undoDrawing)
