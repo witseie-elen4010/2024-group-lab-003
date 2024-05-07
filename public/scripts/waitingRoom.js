@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const waitingText = document.querySelector('.main-content-footer p')
   const settingsView = document.getElementById('settingsView')
   const startGameButton = document.createElement('button')
+  const cancelGameButton = document.createElement('button')
   const roundsInput = document.createElement('input')
   const roundsLabel = document.createElement('label')
 
@@ -104,14 +105,28 @@ document.addEventListener('DOMContentLoaded', async function () {
     const leaveRoomButton = document.getElementById('leaveRoomButton')
     leaveRoomButton.style.display = 'none'
     hideLoadingElements()
-    // Admin setup
+    // Container for buttons
+    const buttonContainer = document.createElement('div')
+    buttonContainer.style.display = 'flex'
+    buttonContainer.style.position = 'absolute'
+    buttonContainer.style.top = '1rem'
+    buttonContainer.style.right = '1rem'
+    buttonContainer.style.gap = '10px' // Adjust this value as needed for spacing
+
+    // Start Game Button
     startGameButton.textContent = 'Start Game'
     startGameButton.id = 'startGameButton'
     startGameButton.classList.add('btn', 'btn-primary')
-    startGameButton.style.position = 'absolute'
-    startGameButton.style.top = '1rem'
-    startGameButton.style.right = '1rem'
-    document.body.appendChild(startGameButton)
+    buttonContainer.appendChild(startGameButton) // Append to the container
+
+    // Cancel Game Button
+    cancelGameButton.textContent = 'Cancel Game'
+    cancelGameButton.id = 'cancelGameButton'
+    cancelGameButton.classList.add('btn', 'btn-danger') // Red button
+    buttonContainer.appendChild(cancelGameButton) // Append to the container
+
+    // Append the container to the body
+    document.body.appendChild(buttonContainer)
 
     // Admin can set the number of rounds
     roundsLabel.textContent = 'Number of Rounds:'
@@ -167,6 +182,29 @@ document.addEventListener('DOMContentLoaded', async function () {
           // Optionally inform the user of the failure to start the game
           window.alert('Failed to start the game. Please try again.')
         })
+    })
+
+    cancelGameButton.addEventListener('click', async function () {
+      try {
+        const response = await fetch(`/api/get-room-players?code=${roomCode}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch players.')
+        }
+        const data = await response.json()
+        if (data.success && data.players.length > 0) {
+          for (const player of data.players) {
+            await removePlayer(player.nickname)
+          }
+          console.log('All players removed successfully')
+          // Optionally update the UI or redirect the user
+        } else {
+          console.error('No players found or failed to fetch players:', data.message)
+          window.alert('No players to remove or failed to fetch players.')
+        }
+      } catch (error) {
+        console.error('Error in cancelling game:', error)
+        window.alert('Error occurred while cancelling the game. Please try again.')
+      }
     })
   }
 
@@ -296,13 +334,13 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Initial fetch of players
   fetchPlayers()
   // Periodically update player list every 0.3 seconds
-  setInterval(fetchPlayers, 500)
+  setInterval(fetchPlayers, 400)
   setInterval(async () => {
     await checkIfRoomHasStarted(roomId)
-  }, 500)
+  }, 400)
 
   function checkIfUserIsInRoom (userID, roomID) {
-    const interval = 5000 // Interval in milliseconds, e.g., 5000ms = 5 seconds
+    const interval = 400 // Interval in milliseconds, e.g., 5000ms = 5 seconds
 
     setInterval(async () => {
       try {
