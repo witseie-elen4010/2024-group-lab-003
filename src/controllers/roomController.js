@@ -278,6 +278,54 @@ async function userIsInRoom (req, res) {
   }
 }
 
+// Create a function to set the number of rounds for a room
+async function setNumRounds (req, res) {
+  const { roomID, numRounds } = req.params // Extract the room ID and number of rounds from request parameters
+
+  try {
+    // Update the room to set the number of rounds
+    const updatedRoom = await Room.findByIdAndUpdate(roomID, { $set: { numRounds } })
+
+    if (!updatedRoom) {
+      return res.status(404).json({ success: false, message: 'Room not found' })
+    }
+
+    // Respond with the updated room
+    res.json({
+      success: true,
+      message: 'Number of rounds updated successfully',
+      room: updatedRoom
+    })
+  } catch (error) {
+    console.error('Error updating number of rounds:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+// Create a function to set the time for a room
+async function setTimePerRound (req, res) {
+  const { roomID, timePerRound } = req.params // Extract the room ID and time per round from request parameters
+
+  try {
+    // Update the room to set the time per round
+    const updatedRoom = await Room.findByIdAndUpdate(roomID, { $set: { timePerRound } })
+
+    if (!updatedRoom) {
+      return res.status(404).json({ success: false, message: 'Room not found' })
+    }
+
+    // Respond with the updated room
+    res.json({
+      success: true,
+      message: 'Time per round updated successfully',
+      room: updatedRoom
+    })
+  } catch (error) {
+    console.error('Error updating time per round:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -288,5 +336,7 @@ module.exports = {
   checkRoomStarted,
   removePlayerFromRoomByID,
   removePlayerFromRoomByNickname,
-  userIsInRoom
+  userIsInRoom,
+  setNumRounds,
+  setTimePerRound
 }

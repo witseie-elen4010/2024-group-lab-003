@@ -1,12 +1,30 @@
 document.addEventListener('DOMContentLoaded', async function () {
   const loadingSpinner = document.querySelector('.main-content-footer .spinner-border')
   const waitingText = document.querySelector('.main-content-footer p')
+  const settingsView = document.getElementById('settingsView')
   const startGameButton = document.createElement('button')
+  const cancelGameButton = document.createElement('button')
+  const roundsInput = document.createElement('input')
+  const roundsLabel = document.createElement('label')
+
+  // Create slider elements
+  const timeLimitSlider = document.createElement('input')
+  const timeLimitLabel = document.createElement('label')
+  const selectedTimeLabel = document.createElement('span')
 
   // Function to hide spinner and text
   function hideLoadingElements () {
     loadingSpinner.style.display = 'none'
     waitingText.style.display = 'none'
+  }
+
+  // Function to update rounds input based on the number of players
+  function updateRoundsInput (players) {
+    roundsInput.min = players.length
+    // If current value of roundsInput is less than number of players, update it
+    if (parseInt(roundsInput.value, 10) < players.length) {
+      roundsInput.value = players.length
+    }
   }
 
   const urlParams = new URLSearchParams(window.location.search)
@@ -87,16 +105,65 @@ document.addEventListener('DOMContentLoaded', async function () {
     const leaveRoomButton = document.getElementById('leaveRoomButton')
     leaveRoomButton.style.display = 'none'
     hideLoadingElements()
-    // Admin setup
+    // Container for buttons
+    const buttonContainer = document.createElement('div')
+    buttonContainer.style.display = 'flex'
+    buttonContainer.style.position = 'absolute'
+    buttonContainer.style.top = '1rem'
+    buttonContainer.style.right = '1rem'
+    buttonContainer.style.gap = '10px' // Adjust this value as needed for spacing
+
+    // Start Game Button
     startGameButton.textContent = 'Start Game'
     startGameButton.id = 'startGameButton'
     startGameButton.classList.add('btn', 'btn-primary')
-    startGameButton.style.position = 'absolute'
-    startGameButton.style.top = '1rem'
-    startGameButton.style.right = '1rem'
-    document.body.appendChild(startGameButton)
+    buttonContainer.appendChild(startGameButton) // Append to the container
+
+    // Cancel Game Button
+    cancelGameButton.textContent = 'Cancel Game'
+    cancelGameButton.id = 'cancelGameButton'
+    cancelGameButton.classList.add('btn', 'btn-danger') // Red button
+    buttonContainer.appendChild(cancelGameButton) // Append to the container
+
+    // Append the container to the body
+    document.body.appendChild(buttonContainer)
+
+    // Admin can set the number of rounds
+    roundsLabel.textContent = 'Number of Rounds:'
+    roundsLabel.setAttribute('for', 'roundsInput')
+    roundsInput.id = 'roundsInput'
+    roundsInput.type = 'number'
+    roundsInput.classList.add('form-control')
+    roundsInput.value = 3 // default value
+
+    // Admin can set time limit
+    timeLimitLabel.textContent = 'Time Limit (seconds):'
+    timeLimitLabel.setAttribute('for', 'timeLimitSlider')
+    timeLimitSlider.id = 'timeLimitSlider'
+    timeLimitSlider.type = 'range'
+    timeLimitSlider.classList.add('form-range')
+    timeLimitSlider.min = 10
+    timeLimitSlider.max = 60
+    timeLimitSlider.value = 10
+    timeLimitSlider.oninput = () => {
+      selectedTimeLabel.textContent = timeLimitSlider.value + ' seconds'
+    }
+    selectedTimeLabel.textContent = timeLimitSlider.value + ' seconds'
+
+    // Append the elements to the settings view
+    settingsView.appendChild(roundsLabel)
+    settingsView.appendChild(roundsInput)
+    settingsView.appendChild(timeLimitLabel)
+    settingsView.appendChild(timeLimitSlider)
+    settingsView.appendChild(selectedTimeLabel)
 
     startGameButton.addEventListener('click', function () {
+      const numRounds = roundsInput.value
+      const timePerRound = timeLimitSlider.value
+
+      setNumRounds(roomId, numRounds)
+      setTimePerRound(roomId, timePerRound)
+
       fetch(`/api/start-room/${roomId}`, {
         method: 'POST'
       })
@@ -116,6 +183,29 @@ document.addEventListener('DOMContentLoaded', async function () {
           window.alert('Failed to start the game. Please try again.')
         })
     })
+
+    cancelGameButton.addEventListener('click', async function () {
+      try {
+        const response = await fetch(`/api/get-room-players?code=${roomCode}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch players.')
+        }
+        const data = await response.json()
+        if (data.success && data.players.length > 0) {
+          for (const player of data.players) {
+            await removePlayer(player.nickname)
+          }
+          console.log('All players removed successfully')
+          // Optionally update the UI or redirect the user
+        } else {
+          console.error('No players found or failed to fetch players:', data.message)
+          window.alert('No players to remove or failed to fetch players.')
+        }
+      } catch (error) {
+        console.error('Error in cancelling game:', error)
+        window.alert('Error occurred while cancelling the game. Please try again.')
+      }
+    })
   }
 
   async function fetchPlayers () {
@@ -127,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       const data = await response.json()
       if (data.success) {
         updatePlayersList(data.players)
-        console.log(data.players)
+        updateRoundsInput(data.players)
       } else {
         console.error('Failed to fetch players:', data.message)
       }
@@ -182,6 +272,39 @@ document.addEventListener('DOMContentLoaded', async function () {
       })
   }
 
+  async function setNumRounds (roomId, numRounds) {
+    try {
+      const response = await fetch(`/api/set-num-rounds/${roomId}/${numRounds}`, {
+        method: 'POST'
+      })
+      if (!response.ok) {
+        throw new Error('Failed to set number of rounds.')
+      }
+      const data = await response.json()
+      console.log('Number of rounds set successfully:', data)
+    } catch (error) {
+      console.error('Error setting number of rounds:', error)
+      // Optionally inform the user of the failure to set number of rounds
+      window.alert('Failed to set number of rounds. Please try again.')
+    }
+  }
+  async function setTimePerRound (roomId, timePerRound) {
+    try {
+      const response = await fetch(`/api/set-time-per-round/${roomId}/${timePerRound}`, {
+        method: 'POST'
+      })
+      if (!response.ok) {
+        throw new Error('Failed to set time per round.')
+      }
+      const data = await response.json()
+      console.log('Time per round set successfully:', data)
+    } catch (error) {
+      console.error('Error setting time per round:', error)
+      // Optionally inform the user of the failure to set time per round
+      window.alert('Failed to set time per round. Please try again.')
+    }
+  }
+
   function addClickEventToPlayers () {
     document.querySelectorAll('#membersListContainer .list-group-item-action').forEach(item => {
       item.addEventListener('click', function (event) {
@@ -211,13 +334,13 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Initial fetch of players
   fetchPlayers()
   // Periodically update player list every 0.3 seconds
-  setInterval(fetchPlayers, 500)
+  setInterval(fetchPlayers, 400)
   setInterval(async () => {
     await checkIfRoomHasStarted(roomId)
-  }, 500)
+  }, 400)
 
   function checkIfUserIsInRoom (userID, roomID) {
-    const interval = 5000 // Interval in milliseconds, e.g., 5000ms = 5 seconds
+    const interval = 400 // Interval in milliseconds, e.g., 5000ms = 5 seconds
 
     setInterval(async () => {
       try {
@@ -227,7 +350,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         const data = await response.json()
         if (data.success) {
-          console.log(`User is in room: ${data.inRoom}`)
           // Additional actions can be taken here based on whether the user is in the room or not
           if (!data.inRoom) {
             console.log('User not found in the room. Handling accordingly...')
