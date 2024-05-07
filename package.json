@@ -15,7 +15,6 @@
       "json",
       "lcov"
     ],
-
     "preset": "@shelf/jest-mongodb",
     "testMatch": [
       "**/test_jest/**/*.test.js?(x)"
