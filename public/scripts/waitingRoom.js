@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', async function () {
   const roundsInput = document.createElement('input')
   const roundsLabel = document.createElement('label')
 
+  // Create slider elements
+  const timeLimitSlider = document.createElement('input')
+  const timeLimitLabel = document.createElement('label')
+  const selectedTimeLabel = document.createElement('span')
+
   // Function to hide spinner and text
   function hideLoadingElements () {
     loadingSpinner.style.display = 'none'
@@ -116,13 +121,34 @@ document.addEventListener('DOMContentLoaded', async function () {
     roundsInput.classList.add('form-control')
     roundsInput.value = 3 // default value
 
+    // Admin can set time limit
+    timeLimitLabel.textContent = 'Time Limit (seconds):'
+    timeLimitLabel.setAttribute('for', 'timeLimitSlider')
+    timeLimitSlider.id = 'timeLimitSlider'
+    timeLimitSlider.type = 'range'
+    timeLimitSlider.classList.add('form-range')
+    timeLimitSlider.min = 10
+    timeLimitSlider.max = 60
+    timeLimitSlider.value = 10
+    timeLimitSlider.oninput = () => {
+      selectedTimeLabel.textContent = timeLimitSlider.value + ' seconds'
+    }
+    selectedTimeLabel.textContent = timeLimitSlider.value + ' seconds'
+
     // Append the elements to the settings view
     settingsView.appendChild(roundsLabel)
     settingsView.appendChild(roundsInput)
+    settingsView.appendChild(timeLimitLabel)
+    settingsView.appendChild(timeLimitSlider)
+    settingsView.appendChild(selectedTimeLabel)
 
     startGameButton.addEventListener('click', function () {
       const numRounds = roundsInput.value
+      const timePerRound = timeLimitSlider.value
+
       setNumRounds(roomId, numRounds)
+      setTimePerRound(roomId, timePerRound)
+
       fetch(`/api/start-room/${roomId}`, {
         method: 'POST'
       })
@@ -144,7 +170,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
   }
 
-  // Modify fetchPlayers function
   async function fetchPlayers () {
     try {
       const response = await fetch(`/api/get-room-players?code=${roomCode}`)
@@ -223,6 +248,22 @@ document.addEventListener('DOMContentLoaded', async function () {
       console.error('Error setting number of rounds:', error)
       // Optionally inform the user of the failure to set number of rounds
       window.alert('Failed to set number of rounds. Please try again.')
+    }
+  }
+  async function setTimePerRound (roomId, timePerRound) {
+    try {
+      const response = await fetch(`/api/set-time-per-round/${roomId}/${timePerRound}`, {
+        method: 'POST'
+      })
+      if (!response.ok) {
+        throw new Error('Failed to set time per round.')
+      }
+      const data = await response.json()
+      console.log('Time per round set successfully:', data)
+    } catch (error) {
+      console.error('Error setting time per round:', error)
+      // Optionally inform the user of the failure to set time per round
+      window.alert('Failed to set time per round. Please try again.')
     }
   }
 
