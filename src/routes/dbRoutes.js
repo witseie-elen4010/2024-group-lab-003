@@ -12,6 +12,7 @@ const { removePlayerFromRoomByID } = require('../controllers/roomController')
 const { removePlayerFromRoomByNickname } = require('../controllers/roomController')
 const { userIsInRoom } = require('../controllers/roomController')
 const { setNumRounds } = require('../controllers/roomController')
+const { setTimePerRound } = require('../controllers/roomController')
 
 router.post('/create-room', createRoom)
 router.post('/join-room', joinRoom)
@@ -24,5 +25,6 @@ router.post('/remove-player-from-room-by-user-id/:userID/:roomID', removePlayerF
 router.post('/remove-player-from-room-by-user-nickname/:userNickname/:roomID', removePlayerFromRoomByNickname)
 router.get('/user-is-in-room/:roomID/:userID', userIsInRoom)
 router.post('/set-num-rounds/:roomID/:numRounds', setNumRounds)
+router.post('/set-time-per-round/:roomID/:timePerRound', setTimePerRound)
 
 module.exports = router

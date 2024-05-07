@@ -9,7 +9,8 @@ const roomSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true },
   createTime: { type: Date, default: Date.now },
   hasStarted: { type: Boolean, default: false },
-  numRounds: { type: Number, required: false }
+  numRounds: { type: Number, required: false },
+  timePerRound: { type: Number, required: false }
 })
 
 const roomPlayerSchema = new mongoose.Schema({
