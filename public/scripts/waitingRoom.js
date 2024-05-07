@@ -1,12 +1,24 @@
 document.addEventListener('DOMContentLoaded', async function () {
   const loadingSpinner = document.querySelector('.main-content-footer .spinner-border')
   const waitingText = document.querySelector('.main-content-footer p')
+  const settingsView = document.getElementById('settingsView')
   const startGameButton = document.createElement('button')
+  const roundsInput = document.createElement('input')
+  const roundsLabel = document.createElement('label')
 
   // Function to hide spinner and text
   function hideLoadingElements () {
     loadingSpinner.style.display = 'none'
     waitingText.style.display = 'none'
+  }
+
+  // Function to update rounds input based on the number of players
+  function updateRoundsInput (players) {
+    roundsInput.min = players.length
+    // If current value of roundsInput is less than number of players, update it
+    if (parseInt(roundsInput.value, 10) < players.length) {
+      roundsInput.value = players.length
+    }
   }
 
   const urlParams = new URLSearchParams(window.location.search)
@@ -96,7 +108,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     startGameButton.style.right = '1rem'
     document.body.appendChild(startGameButton)
 
+    // Admin can set the number of rounds
+    roundsLabel.textContent = 'Number of Rounds:'
+    roundsLabel.setAttribute('for', 'roundsInput')
+    roundsInput.id = 'roundsInput'
+    roundsInput.type = 'number'
+    roundsInput.classList.add('form-control')
+    roundsInput.value = 3 // default value
+
+    // Append the elements to the settings view
+    settingsView.appendChild(roundsLabel)
+    settingsView.appendChild(roundsInput)
+
     startGameButton.addEventListener('click', function () {
+      const numRounds = roundsInput.value
+      setNumRounds(roomId, numRounds)
       fetch(`/api/start-room/${roomId}`, {
         method: 'POST'
       })
@@ -118,6 +144,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
   }
 
+  // Modify fetchPlayers function
   async function fetchPlayers () {
     try {
       const response = await fetch(`/api/get-room-players?code=${roomCode}`)
@@ -127,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       const data = await response.json()
       if (data.success) {
         updatePlayersList(data.players)
-        console.log(data.players)
+        updateRoundsInput(data.players)
       } else {
         console.error('Failed to fetch players:', data.message)
       }
@@ -182,6 +209,23 @@ document.addEventListener('DOMContentLoaded', async function () {
       })
   }
 
+  async function setNumRounds (roomId, numRounds) {
+    try {
+      const response = await fetch(`/api/set-num-rounds/${roomId}/${numRounds}`, {
+        method: 'POST'
+      })
+      if (!response.ok) {
+        throw new Error('Failed to set number of rounds.')
+      }
+      const data = await response.json()
+      console.log('Number of rounds set successfully:', data)
+    } catch (error) {
+      console.error('Error setting number of rounds:', error)
+      // Optionally inform the user of the failure to set number of rounds
+      window.alert('Failed to set number of rounds. Please try again.')
+    }
+  }
+
   function addClickEventToPlayers () {
     document.querySelectorAll('#membersListContainer .list-group-item-action').forEach(item => {
       item.addEventListener('click', function (event) {
@@ -227,7 +271,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         const data = await response.json()
         if (data.success) {
-          console.log(`User is in room: ${data.inRoom}`)
           // Additional actions can be taken here based on whether the user is in the room or not
           if (!data.inRoom) {
             console.log('User not found in the room. Handling accordingly...')
