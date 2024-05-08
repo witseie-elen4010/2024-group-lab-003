@@ -772,6 +772,27 @@ async function getDrawing (req, res) {
     res.status(500).json({ success: false, message: 'Internal server error' })
   }
 }
+async function fetchAllRoomPlayers (req, res) {
+  try {
+    // Then, fetch all players associated with this room and populate user details
+    const players = await RoomPlayer.find({ }).populate('user', 'email') // Populate only the email field from User
+
+    // Map over the players to extract necessary data
+    const playerData = players.map(p => ({
+      nickname: p.nickname,
+      isAdmin: p.isAdmin,
+      email: p.user.email // Access the populated email field
+    }))
+
+    res.json({
+      success: true,
+      players: playerData
+    })
+  } catch (error) {
+    console.error('Error fetching room players:', error)
+    res.status(500).json({ success: false, error: 'Internal server error' })
+  }
+}
 
 module.exports = {
   getRoomPlayers,
@@ -800,5 +821,6 @@ module.exports = {
   getFinalText,
   addImage,
   getBookUserIdFromText,
-  getDrawing
+  getDrawing,
+  fetchAllRoomPlayers
 }
