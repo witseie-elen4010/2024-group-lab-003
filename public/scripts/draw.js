@@ -4,6 +4,99 @@ const roomId = queryParams.get('roomId')
 const userId = queryParams.get('userId')
 const round = queryParams.get('round')
 
+let roundId
+let text
+
+console.log(roomId)
+console.log(round)
+
+fetch(`/api/get-round-id/${roomId}/${round}`)
+  .then(response => {
+    if (response.ok) {
+      return response.json() // Parse the JSON response if successful
+    } else {
+      throw new Error(`Failed to fetch round ID for round ${round}`) // Throw an error if response not OK
+    }
+  })
+  .then(data => {
+    if (data.success) {
+      roundId = data.roundID // Set the round ID
+      let bookUserId
+      console.log(`round ID: ${roundId}`)
+
+      // get BookUserId
+      fetch(`/api/get-user-book-id-from-draw/${roundId}/${userId}`)
+        .then(response => {
+          if (response.ok) {
+            return response.json() // Parse the JSON response if successful
+          } else {
+            throw new Error(`Failed to fetch round ID for round ${round - 1}`) // Throw an error if response not OK
+          }
+        })
+        .then(data => {
+          if (data.success) {
+            bookUserId = data.bookUser // Set the round ID
+            console.log(bookUserId)
+
+            console.log(roundId)
+            console.log(bookUserId)
+
+            // get prevRoundId
+            fetch(`/api/get-round-id/${roomId}/${round - 1}`)
+              .then(response => {
+                if (response.ok) {
+                  return response.json() // Parse the JSON response if successful
+                } else {
+                  throw new Error(`Failed to fetch round ID for round ${round}`) // Throw an error if response not OK
+                }
+              })
+              .then(data => {
+                if (data.success) {
+                  const preRoundId = data.roundID // Set the round ID
+
+                  // get the prev Text
+                  fetch(`/api/get-text/${preRoundId}/${bookUserId}`)
+                    .then(response => {
+                      if (response.ok) {
+                        return response.json() // Parse the JSON response if successful
+                      } else {
+                        throw new Error(`Failed to fetch round ID for round ${round - 1}`) // Throw an error if response not OK
+                      }
+                    })
+                    .then(data => {
+                      if (data.success) {
+                        text = data.textData // Set the round ID
+                        console.log(text)
+                        document.getElementById('drawingTitle').textContent = text // Update the heading text
+                      } else {
+                        console.error('Fetch successful but API returned an error for round:', round - 1)
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error fetching round ID for round', round - 1, ':', error)
+                    })
+                } else {
+                  console.error('Fetch successful but API returned an error for round:', round)
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching round ID for round', round, ':', error)
+              })
+          } else {
+            console.error('Fetch successful but API returned an error for round:', round - 1)
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching round ID for round', round - 1, ':', error)
+        })
+    } else {
+      console.error('Fetch successful but API returned an error for round:', round)
+    }
+  })
+  .catch(error => {
+    console.error('Error fetching round ID for round', round, ':', error)
+  })
+
 const canvas = document.getElementById('drawingCanvas')
 const ctx = canvas.getContext('2d')
 

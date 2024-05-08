@@ -385,10 +385,6 @@ async function getRoundID (req, res) {
 async function insertBookEntries (req, res) {
   const { kingArthursRoundTable, roundIdList, userIDs } = req.body // Assuming these are passed in the request body
 
-  console.log(kingArthursRoundTable)
-  console.log(roundIdList)
-  console.log(userIDs)
-
   try {
     // Check if the input arrays have appropriate lengths
     if (!roundIdList.length || !userIDs.length || !kingArthursRoundTable.length) {
@@ -461,7 +457,8 @@ async function getRoomRounds (req, res) {
     res.json({
       success: true,
       rounds: rounds.map(round => ({
-        id: round._id // Map directly in the response
+        id: round._id, // Map directly in the response
+        bookUser: round.bookUser
       }))
     })
   } catch (error) {
@@ -492,6 +489,69 @@ async function addTextDescription (req, res) {
   }
 }
 
+async function getText (req, res) {
+  const { roundId, bookUserId } = req.params // Assuming roundId and bookUserId are passed as URL parameters
+
+  console.log(roundId)
+  console.log(bookUserId)
+
+  try {
+    const textEntry = await Texting.findOne({
+      round: roundId,
+      bookUser: bookUserId
+    }).exec() // Fetching the Texting document based on roundId and bookUserId
+
+    console.log(textEntry.textData)
+    console.log('')
+
+    if (!textEntry) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Text entry not found' })
+    }
+
+    res.json({ success: true, textData: textEntry.textData })
+  } catch (error) {
+    console.error('Error fetching text data:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+async function getBookUserIdFromDraw (req, res) {
+  const { roundId, drawUserId } = req.params // Extract roundId and textUserId from request parameters
+
+  console.log(roundId)
+  console.log(drawUserId)
+
+  try {
+    // Find the Texting entry with the specified roundId and textUserId
+    const drawingEntry = await Drawing.findOne({ round: roundId, drawerUser: drawUserId })
+
+    console.log('Here')
+    console.log(drawingEntry.bookUser)
+
+    if (!drawingEntry) {
+      return res.status(404).json({ success: false, message: 'Text entry not found' })
+    }
+
+    // Assuming bookUser is the intended output, though your schema indicates this might be from a different logic
+    const bookUserId = drawingEntry.bookUser
+    if (!bookUserId) {
+      return res.status(404).json({ success: false, message: 'Book user not found for the provided IDs' })
+    }
+
+    // Respond with the bookUserId
+    res.json({
+      success: true,
+      message: 'Book user ID retrieved successfully',
+      bookUser: bookUserId
+    })
+  } catch (error) {
+    console.error('Error retrieving book user ID:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -509,5 +569,7 @@ module.exports = {
   getRoundID,
   insertBookEntries,
   getRoomRounds,
-  addTextDescription
+  addTextDescription,
+  getText,
+  getBookUserIdFromDraw
 }

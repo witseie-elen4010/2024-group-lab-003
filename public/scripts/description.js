@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
               }
             })
             .then(() => {
-              round = round + 1
+              round = Number(round) + 1
               window.location.href = `/drawing?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}`
             })
         } else {
