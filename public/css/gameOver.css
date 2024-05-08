@@ -1,0 +1,10 @@
+#book-list {
+    width: 80%; /* Adjust the width as needed */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#right-panel {
+    background-color: #f0f0f0;
+    min-height: 100vh;
+}
