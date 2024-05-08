@@ -22,47 +22,39 @@ const roomPlayerSchema = new mongoose.Schema({
 
 const roundSchema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
-  roundNumber: { type: Number, required: true }
-})
-
-const textPromptSchema = new mongoose.Schema({
-  description: { type: String, required: true }
-})
-
-const imagePromptSchema = new mongoose.Schema({
-  imageUrl: { type: String, required: true }
+  roundNumber: { type: Number, required: true },
+  numberPlayersReady: { type: Number, required: true },
+  totalPlayers: { type: Number, required: true }
 })
 
 const drawingSchema = new mongoose.Schema({
   round: { type: mongoose.Schema.Types.ObjectId, ref: 'Round', required: true },
-  textPrompt: { type: mongoose.Schema.Types.ObjectId, ref: 'TextPrompt' },
-  imagePrompt: { type: mongoose.Schema.Types.ObjectId, ref: 'ImagePrompt' },
+  bookUser: { type: mongoose.Schema.Types.ObjectId, required: true },
+  textPrompt: { type: mongoose.Schema.Types.ObjectId, ref: 'TextPrompt', required: false },
   drawerUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  imageData: { type: String, required: true } // Storing image data as URL or file path
+  imageData: { type: String, required: false } // Storing image data as URL or file path
 })
 
-const guessSchema = new mongoose.Schema({
-  drawing: { type: mongoose.Schema.Types.ObjectId, ref: 'Drawing', required: true },
-  guesserUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  guessText: { type: String, required: true }
+const textingSchema = new mongoose.Schema({
+  round: { type: mongoose.Schema.Types.ObjectId, ref: 'Round', required: false },
+  bookUser: { type: mongoose.Schema.Types.ObjectId, required: true },
+  imagePrompt: { type: mongoose.Schema.Types.ObjectId, ref: 'TextPrompt' },
+  textUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  textData: { type: String, required: false } // Storing image data as URL or file path
 })
 
 const User = mongoose.model('User', userSchema)
 const Room = mongoose.model('Room', roomSchema)
 const RoomPlayer = mongoose.model('RoomPlayer', roomPlayerSchema)
 const Round = mongoose.model('Round', roundSchema)
-const TextPrompt = mongoose.model('TextPrompt', textPromptSchema)
-const ImagePrompt = mongoose.model('ImagePrompt', imagePromptSchema)
 const Drawing = mongoose.model('Drawing', drawingSchema)
-const Guess = mongoose.model('Guess', guessSchema)
+const Texting = mongoose.model('Guess', textingSchema)
 
 module.exports = {
   User,
   Room,
   RoomPlayer,
   Round,
-  TextPrompt,
-  ImagePrompt,
   Drawing,
-  Guess
+  Texting
 }

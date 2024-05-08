@@ -1,3 +1,5 @@
+// const { response } = require('express')
+
 document.addEventListener('DOMContentLoaded', async function () {
   const loadingSpinner = document.querySelector('.main-content-footer .spinner-border')
   const waitingText = document.querySelector('.main-content-footer p')
@@ -6,6 +8,45 @@ document.addEventListener('DOMContentLoaded', async function () {
   const cancelGameButton = document.createElement('button')
   const roundsInput = document.createElement('input')
   const roundsLabel = document.createElement('label')
+
+  // --------------------------------------------------------------------------------------------------
+  // Variables for the game
+  let numberRounds = 0
+  let userIDs = [] // Array to store user IDs
+
+  // Function to shuffle an array using the Fisher-Yates shuffle algorithm
+  function shuffleArray (array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
+      [array[i], array[j]] = [array[j], array[i]] // Swap elements
+    }
+    return array
+  }
+
+  function fillInRoundTable () {
+    const roundTable = []
+
+    for (let i = 0; i < numberRounds; i++) {
+      let shuffledIDs
+
+      // Check if the shuffled IDs do not match the same column position as the last round
+      do {
+        shuffledIDs = shuffleArray([...userIDs]) // Create a copy of userIDs and shuffle it
+
+        // Ensure it's not the first round and check for column-wise duplication with the previous round
+        if (i > 0 && shuffledIDs.some((id, index) => id === roundTable[i - 1][index])) {
+          continue // If duplication is found, reshuffle
+        }
+
+        break // If it's the first round or no duplication is found, break the loop
+      } while (true)
+
+      roundTable.push(shuffledIDs)
+    }
+
+    return roundTable
+  }
+  // --------------------------------------------------------------------------------------------------
 
   // Create slider elements
   const timeLimitSlider = document.createElement('input')
@@ -160,27 +201,107 @@ document.addEventListener('DOMContentLoaded', async function () {
     startGameButton.addEventListener('click', function () {
       const numRounds = roundsInput.value
       const timePerRound = timeLimitSlider.value
+      numberRounds = numRounds
 
       setNumRounds(roomId, numRounds)
       setTimePerRound(roomId, timePerRound)
+      const roundIdList = []
 
-      fetch(`/api/start-room/${roomId}`, {
+      // First, perform the initial POST request to add round objects.
+      fetch(`/api/add-round-objects/${roomId}/${numRounds}`, {
         method: 'POST'
       })
         .then(response => {
           if (response.ok) {
             return response.json() // Parsing the JSON response if successful
           } else {
-            throw new Error('Failed to start the game.') // Throw error if response not OK
+            throw new Error('Failed to add rounds.') // Throw error if response not OK
           }
         })
-        .then(data => {
-          // console.log('Game started successfully:', data);
+        .then(() => {
+          const fetchPromises = []
+
+          // Generate a list of promises from fetch requests for each round ID.
+          for (let i = 1; i <= numRounds; i++) {
+            const fetchPromise = fetch(`/api/get-round-id/${roomId}/${i}`)
+              .then(response => {
+                if (response.ok) {
+                  return response.json() // Parse the JSON response if successful
+                } else {
+                  throw new Error(`Failed to fetch round ID for round ${i}`) // Throw an error if response not OK
+                }
+              })
+              .then(data => {
+                if (data.success) {
+                  roundIdList.push(data.roundID) // Append the round ID to the list
+                } else {
+                  console.error('Fetch successful but API returned an error for round:', i)
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching round ID for round', i, ':', error)
+              })
+
+            fetchPromises.push(fetchPromise) // Store the promise for later processing
+          }
+
+          // Wait for all the round ID fetch promises to resolve.
+          return Promise.all(fetchPromises)
+        })
+        .then(() => {
+          const kingArthursRoundTable = fillInRoundTable()
+          console.log('All round IDs have been retrieved:', roundIdList)
+          console.log(userIDs)
+          console.log(kingArthursRoundTable)
+
+          fetch('/api/add-all-texts-and-draws', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              kingArthursRoundTable,
+              roundIdList,
+              userIDs
+            })
+          })
+            .then(response => {
+              if (response.ok) {
+                return response.json() // Parsing the JSON response if successful
+              } else {
+                console.log(response.json())
+                throw new Error('Failed to add all stuff.') // Throw error if response not OK
+              }
+            })
+            .then(data => {
+              fetch(`/api/start-room/${roomId}`, {
+                method: 'POST'
+              })
+                .then(response => {
+                  if (response.ok) {
+                    return response.json() // Parsing the JSON response if successful
+                  } else {
+                    throw new Error('Failed to start the game.') // Throw error if response not OK
+                  }
+                })
+                .then(data => {
+                  // console.log('Game started successfully:', data);
+                })
+                .catch(error => {
+                  console.error('Error starting game:', error)
+                  // Optionally inform the user of the failure to start the game
+                  window.alert('Failed to start the game. Please try again.')
+                })
+            })
+            .catch(error => {
+              console.error('Error adding all stuff:', error)
+              // Optionally inform the user of the failure to start the game
+              window.alert('Failed to all stuff. Please try again.')
+            })
         })
         .catch(error => {
-          console.error('Error starting game:', error)
-          // Optionally inform the user of the failure to start the game
-          window.alert('Failed to start the game. Please try again.')
+          console.error('Error during operations:', error)
+          window.alert('Failed to add rounds. Please try again.')
         })
     })
 
@@ -238,8 +359,8 @@ document.addEventListener('DOMContentLoaded', async function () {
           clearInterval(checkRoomInterval) // Stop checking if the room has started
 
           // Randomly choose between /drawing and /description
-          const nextPage = Math.random() < 0.5 ? '/drawing' : '/description'
-          window.location.href = nextPage
+          const round = 1
+          window.location.href = `/description?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}`
         }
       } else {
         console.error('Failed to get room started status:', data.message)
@@ -316,9 +437,11 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   function updatePlayersList (players) {
+    userIDs = []
     const playersList = document.getElementById('membersListContainer')
     const list = players
       .map((player, index) => {
+        userIDs.push(player.id)
         if (index === 0) { // Check if it's the first player in the list, assumed to be the admin
           return `<span class="list-group-item">${player.nickname} (Admin)</span>`
         } else {
