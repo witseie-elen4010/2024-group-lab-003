@@ -22,7 +22,9 @@ const roomPlayerSchema = new mongoose.Schema({
 
 const roundSchema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
-  roundNumber: { type: Number, required: true }
+  roundNumber: { type: Number, required: true },
+  numberPlayersReady: { type: Number, required: true },
+  totalPlayers: { type: Number, required: true }
 })
 
 const drawingSchema = new mongoose.Schema({

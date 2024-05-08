@@ -20,6 +20,8 @@ const { getRoomRounds } = require('../controllers/roomController')
 const { addTextDescription } = require('../controllers/roomController')
 const { getText } = require('../controllers/roomController')
 const { getBookUserIdFromDraw } = require('../controllers/roomController')
+const { incrementPlayersReadyInRound } = require('../controllers/roomController')
+const { checkAllPlayersReady } = require('../controllers/roomController')
 
 router.post('/create-room', createRoom)
 router.post('/join-room', joinRoom)
@@ -40,5 +42,7 @@ router.get('/get-room-rounds', getRoomRounds)
 router.post('/add-description/:userId/:roundId/:text', addTextDescription)
 router.get('/get-text/:roundId/:bookUserId', getText)
 router.get('/get-user-book-id-from-draw/:roundId/:drawUserId', getBookUserIdFromDraw)
+router.post('/increment-round-players/:roomId/:roundNumber', incrementPlayersReadyInRound)
+router.get('/round-is-ready/:roomId/:roundNum', checkAllPlayersReady)
 
 module.exports = router

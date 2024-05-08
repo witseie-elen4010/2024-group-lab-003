@@ -48,7 +48,20 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(() => {
               round = Number(round) + 1
-              window.location.href = `/drawing?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}`
+              // increment round players
+              fetch(`/api/increment-round-players/${roomId}/${round}`, {
+                method: 'POST'
+              })
+                .then(response => {
+                  if (response.ok) {
+                    return response.json() // Parsing the JSON response if successful
+                  } else {
+                    throw new Error('Failed to add rounds.') // Throw error if response not OK
+                  }
+                })
+                .then(() => {
+                  window.location.href = `/drawing?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}`
+                })
             })
         } else {
           console.error('Fetch successful but API returned an error for round:', round)

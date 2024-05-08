@@ -336,12 +336,17 @@ async function addRoundsToRoom (req, res) {
       return res.status(404).json({ success: false, message: 'Room not found' })
     }
 
+    // Calculate total number of players in the room
+    const totalNumberofPlayersInRoom = await RoomPlayer.countDocuments({ room: roomID })
+
     // Create and save each round to the database
     const roundIds = [] // Array to store the IDs of newly created rounds
     for (let i = 1; i <= numRounds; i++) {
       const newRound = new Round({
         room: roomID,
-        roundNumber: i
+        roundNumber: i,
+        numberPlayersReady: 0,
+        totalPlayers: totalNumberofPlayersInRoom
       })
       await newRound.save()
       roundIds.push(newRound._id) // Add new round ID to the array
@@ -552,6 +557,67 @@ async function getBookUserIdFromDraw (req, res) {
   }
 }
 
+async function incrementPlayersReadyInRound (req, res) {
+  const { roomId, roundNumber } = req.params // Extract the room ID and round number from request parameters
+
+  try {
+    // Find the round by roomID and roundNumber and atomically increment the numberPlayersReady field
+    const updatedRound = await Round.findOneAndUpdate(
+      { room: roomId, roundNumber }, // Condition to find the specific round
+      { $inc: { numberPlayersReady: 1 } }, // Increment numberPlayersReady by 1
+      { new: true } // Return the updated document
+    )
+
+    if (!updatedRound) {
+      return res.status(404).json({ success: false, message: 'Round not found' })
+    }
+
+    // Respond successfully with the updated round information
+    res.json({
+      success: true,
+      message: 'Player readiness incremented',
+      round: updatedRound
+    })
+  } catch (error) {
+    console.error('Error incrementing player readiness:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+async function checkAllPlayersReady (req, res) {
+  const { roomId, roundNum } = req.params // Extract the room ID and round number from request parameters
+
+  console.log(roomId)
+  console.log(roundNum)
+
+  try {
+    // Find the round based on roomID and roundNumber
+    const round = await Round.findOne({ room: roomId, roundNumber: roundNum })
+    console.log(round.totalPlayers)
+    if (!round) {
+      return res.status(404).json({ success: false, message: 'Round not found' })
+    }
+
+    // Check if all players are ready
+    if (round.numberPlayersReady === round.totalPlayers) {
+      res.json({
+        success: true,
+        message: 'All players are ready',
+        allReady: true
+      })
+    } else {
+      res.json({
+        success: true,
+        message: 'Not all players are ready',
+        allReady: false
+      })
+    }
+  } catch (error) {
+    console.error('Error checking player readiness:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -571,5 +637,7 @@ module.exports = {
   getRoomRounds,
   addTextDescription,
   getText,
-  getBookUserIdFromDraw
+  getBookUserIdFromDraw,
+  incrementPlayersReadyInRound,
+  checkAllPlayersReady
 }
