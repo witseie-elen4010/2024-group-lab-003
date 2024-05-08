@@ -29,13 +29,14 @@ This sprint aimed to enhance the user experience in Doodles All The Way Down by 
 ### 6. Tickets Completed
 | Task                                         | Assigned to | Reviewed by |
 |----------------------------------------------|-------------|-------------|
-| View Game Logs                               | Akiva Levitt      | Joseph kaplan      |
+| View Game Logs                               | Akiva Levitt      | Joseph Kaplan      |
 | View Completed Book at the End of Game       | Jacob Sacks      | Yishai Basserabie      |
 | Set Round Duration                           | Jacob Sacks      | Yishai Basserabie      |
 | Respond to Another Player's Drawing with a Drawing | Yishai Basserabie | Jacob Sacks     |
-| Set Number of Rounds                         | Jacob Sacks      | Yishai Basserabie      |
+| Set Number of Rounds                         | Jacob Sacks      | Joseph Kaplan      |
 | Cancel Game                                  | Yishai Basserabie      | Jacob Sacks      |
 | Respond to Another Player's Drawing with Writing | Yishai Basserabie | Jacob Sacks      |
+| User can click the logs button and be directed | Joseph Kaplan | Akiva Levitt |
 
 ### 7. Key Decisions and Discussions
 - *Technical Enhancements:* Discussed potential technical enhancements for future sprints to further improve user experience and game functionality.
