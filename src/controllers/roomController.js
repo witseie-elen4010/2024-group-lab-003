@@ -326,37 +326,6 @@ async function setTimePerRound (req, res) {
   }
 }
 
-// Create a function to add round objects to the database for each round
-// async function addRoundsToRoom (req, res) {
-//   const { roomID, numRounds } = req.params // Extract the room ID and number of rounds from request parameters
-
-//   try {
-//     // Check if the room exists before adding rounds
-//     const roomExists = await Room.findById(roomID)
-//     if (!roomExists) {
-//       return res.status(404).json({ success: false, message: 'Room not found' })
-//     }
-
-//     // Create and save each round to the database
-//     for (let i = 1; i <= numRounds; i++) {
-//       const newRound = new Round({
-//         room: roomID,
-//         roundNumber: i
-//       })
-//       await newRound.save()
-//     }
-
-//     // Respond successfully after all rounds are added
-//     res.json({
-//       success: true,
-//       message: 'Rounds added successfully'
-//     })
-//   } catch (error) {
-//     console.error('Error adding rounds:', error)
-//     res.status(500).json({ success: false, message: 'Internal server error' })
-//   }
-// }
-
 async function addRoundsToRoom (req, res) {
   const { roomID, numRounds } = req.params // Extract the room ID and number of rounds from request parameters
 
@@ -433,36 +402,32 @@ async function insertBookEntries (req, res) {
       const roundID = roundIdList[i]
       const isEvenRound = (i % 2 === 1) // 0-based index: even index is odd round number
 
-      // Fetch the corresponding bookUser for the round using the column (user trajectory) for this round
-      const bookUser = kingArthursRoundTable[i % kingArthursRoundTable.length][Math.floor(i / kingArthursRoundTable.length)]
+      for (let j = 0; j < userIDs.length; j++) {
+        // Fetch the corresponding bookUser for the round using the column (user trajectory) for this round
+        const bookUser = kingArthursRoundTable[i][j]
+        const userID = userIDs[j]
 
-      // Check if user for this round is available
-      if (!userIDs[i % userIDs.length]) {
-        continue // Skip this round if no user is mapped
-      }
-
-      const userID = userIDs[i % userIDs.length]
-
-      if (isEvenRound) {
+        if (isEvenRound) {
         // Insert into Drawing schema for even rounds
-        const newDrawing = new Drawing({
-          round: roundID,
-          bookUser,
-          drawerUser: userID,
-          imageData: '', // Left blank for later update
-          textPrompt: undefined // Explicitly unset
-        })
-        entries.push(newDrawing.save())
-      } else {
+          const newDrawing = new Drawing({
+            round: roundID,
+            bookUser,
+            drawerUser: userID,
+            imageData: '', // Left blank for later update
+            textPrompt: undefined // Explicitly unset
+          })
+          entries.push(newDrawing.save())
+        } else {
         // Insert into Texting schema for odd rounds
-        const newTexting = new Texting({
-          round: roundID,
-          bookUser,
-          textUser: userID,
-          textData: '', // Left blank for later update
-          imagePrompt: undefined // Explicitly unset
-        })
-        entries.push(newTexting.save())
+          const newTexting = new Texting({
+            round: roundID,
+            bookUser,
+            textUser: userID,
+            textData: '', // Left blank for later update
+            imagePrompt: undefined // Explicitly unset
+          })
+          entries.push(newTexting.save())
+        }
       }
     }
 

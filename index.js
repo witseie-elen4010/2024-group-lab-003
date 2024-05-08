@@ -6,6 +6,7 @@ const roomRoutes = require('./src/routes/dbRoutes.js')
 
 const app = express()
 app.use(bodyParser.json())
+app.use(express.json())
 app.use('/api', roomRoutes)
 
 mongoose.connect(process.env.MONGO_URI)

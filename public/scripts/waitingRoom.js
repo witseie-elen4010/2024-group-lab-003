@@ -249,13 +249,24 @@ document.addEventListener('DOMContentLoaded', async function () {
           return Promise.all(fetchPromises)
         })
         .then(() => {
+          const kingArthursRoundTable = fillInRoundTable()
           console.log('All round IDs have been retrieved:', roundIdList)
           console.log(userIDs)
-
-          const kingArthursRoundTable = fillInRoundTable()
           console.log(kingArthursRoundTable)
-          fetch(`/api/add-all-texts-and-draws/${kingArthursRoundTable}/${roundIdList}/${userIDs}`, {
-            method: 'POST'
+
+          // fetch(`/api/add-all-texts-and-draws/${kingArthursRoundTable}/${roundIdList}/${userIDs}`, {
+          //   method: 'POST'
+          // })
+          fetch('/api/add-all-texts-and-draws', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              kingArthursRoundTable,
+              roundIdList,
+              userIDs
+            })
           })
             .then(response => {
               if (response.ok) {

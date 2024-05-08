@@ -32,7 +32,8 @@ router.post('/set-num-rounds/:roomID/:numRounds', setNumRounds)
 router.post('/set-time-per-round/:roomID/:timePerRound', setTimePerRound)
 router.post('/add-round-objects/:roomID/:numRounds', addRoundsToRoom)
 router.get('/get-round-id/:roomID/:roundNumber', getRoundID)
-router.post('/add-all-texts-and-draws/:kingArthursRoundTable/:roundIdList/:userIDs', insertBookEntries)
+// router.post('/add-all-texts-and-draws/:kingArthursRoundTable/:roundIdList/:userIDs', insertBookEntries)
+router.post('/add-all-texts-and-draws', insertBookEntries)
 router.get('/get-room-rounds', getRoomRounds)
 
 module.exports = router
