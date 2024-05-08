@@ -128,6 +128,57 @@ function startRound () {
       console.error('Error fetching round ID for round', round, ':', error)
     })
 
+  document.getElementById('submitDrawing').addEventListener('click', function () {
+    console.log('Submit button clicked')
+    const canvas = document.getElementById('drawingCanvas')
+    const dataUrl = canvas.toDataURL('image/png')
+    console.log('image to URL')
+
+    // Convert DataURL to Blob
+    fetch(dataUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const formData = new FormData()
+        formData.append('image', blob, 'my-drawing.png') // Append the blob as 'my-drawing.png'
+        console.log('appended the image as a blob')
+
+        // Add additional parameters if needed
+        formData.append('userId', userId) // Ensure the userId is correctly assigned
+        formData.append('roundId', roomId) // Ensure the roundId is correctly assigned
+
+        // Send the formData with the file to your server endpoint
+        fetch('/api/addImageToDrawing', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json() // Parsing the JSON response if successful
+            } else {
+              throw new Error('Failed to add image.') // Throw error if response not OK
+            }
+          })
+          .then(() => {
+            this.round = Number(round) + 1
+            // Increment round players
+            fetch(`/api/increment-round-players/${roomId}/${round}`, {
+              method: 'POST'
+            })
+              .then(response => {
+                if (response.ok) {
+                  return response.json() // Parsing the JSON response if successful
+                } else {
+                  throw new Error('Failed to add rounds.') // Throw error if response not OK
+                }
+              })
+              .then(() => {
+                window.location.href = `/description?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}`
+              })
+          })
+          .catch(error => console.error('Error:', error)) // Log or handle errors appropriately
+      })
+  })
+
   const canvas = document.getElementById('drawingCanvas')
   const ctx = canvas.getContext('2d')
 

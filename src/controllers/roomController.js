@@ -507,7 +507,6 @@ async function getText (req, res) {
     }).exec() // Fetching the Texting document based on roundId and bookUserId
 
     console.log(textEntry.textData)
-    console.log('')
 
     if (!textEntry) {
       return res
@@ -531,9 +530,6 @@ async function getBookUserIdFromDraw (req, res) {
   try {
     // Find the Texting entry with the specified roundId and textUserId
     const drawingEntry = await Drawing.findOne({ round: roundId, drawerUser: drawUserId })
-
-    console.log('Here')
-    console.log(drawingEntry.bookUser)
 
     if (!drawingEntry) {
       return res.status(404).json({ success: false, message: 'Text entry not found' })
@@ -587,9 +583,6 @@ async function incrementPlayersReadyInRound (req, res) {
 async function checkAllPlayersReady (req, res) {
   const { roomId, roundNum } = req.params // Extract the room ID and round number from request parameters
 
-  console.log(roomId)
-  console.log(roundNum)
-
   try {
     // Find the round based on roomID and roundNumber
     const round = await Round.findOne({ room: roomId, roundNumber: roundNum })
@@ -618,6 +611,36 @@ async function checkAllPlayersReady (req, res) {
   }
 }
 
+async function addImage (req, res) {
+  const { userId, roundId } = req.body
+  const imageFile = req.file // Accessed via multer
+
+  console.log(imageFile.buffer)
+
+  if (!imageFile) {
+    return res.status(400).json({ success: false, message: 'No image file provided' })
+  }
+
+  try {
+    const buffer = imageFile.buffer // Access the buffer from the uploaded file
+
+    const updatedDrawing = await Drawing.findOneAndUpdate(
+      { round: roundId, drawerUser: userId },
+      { imageData: buffer },
+      { upsert: true, new: true, runValidators: true }
+    )
+
+    res.json({
+      success: true,
+      message: 'Image added successfully',
+      drawing: updatedDrawing
+    })
+  } catch (error) {
+    console.error('Error adding image:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -639,5 +662,6 @@ module.exports = {
   getText,
   getBookUserIdFromDraw,
   incrementPlayersReadyInRound,
-  checkAllPlayersReady
+  checkAllPlayersReady,
+  addImage
 }
