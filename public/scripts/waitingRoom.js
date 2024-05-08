@@ -254,9 +254,6 @@ document.addEventListener('DOMContentLoaded', async function () {
           console.log(userIDs)
           console.log(kingArthursRoundTable)
 
-          // fetch(`/api/add-all-texts-and-draws/${kingArthursRoundTable}/${roundIdList}/${userIDs}`, {
-          //   method: 'POST'
-          // })
           fetch('/api/add-all-texts-and-draws', {
             method: 'POST',
             headers: {

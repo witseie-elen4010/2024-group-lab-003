@@ -470,6 +470,28 @@ async function getRoomRounds (req, res) {
   }
 }
 
+async function addTextDescription (req, res) {
+  const { userId, roundId, text } = req.params // Extract parameters
+
+  try {
+    // Create or update a texting document
+    const updatedTexting = await Texting.findOneAndUpdate(
+      { round: roundId, textUser: userId },
+      { textData: text },
+      { upsert: true, new: true, runValidators: true }
+    )
+
+    res.json({
+      success: true,
+      message: 'Text description added successfully',
+      texting: updatedTexting
+    })
+  } catch (error) {
+    console.error('Error adding text description:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -486,5 +508,6 @@ module.exports = {
   addRoundsToRoom,
   getRoundID,
   insertBookEntries,
-  getRoomRounds
+  getRoomRounds,
+  addTextDescription
 }

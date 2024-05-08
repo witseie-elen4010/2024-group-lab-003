@@ -1,3 +1,9 @@
+// Extracting URL parameters
+const queryParams = new URLSearchParams(window.location.search)
+const roomId = queryParams.get('roomId')
+const userId = queryParams.get('userId')
+const round = queryParams.get('round')
+
 const canvas = document.getElementById('drawingCanvas')
 const ctx = canvas.getContext('2d')
 
