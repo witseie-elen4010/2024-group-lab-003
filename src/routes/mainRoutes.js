@@ -40,4 +40,8 @@ router.get('/gameOver', (req, res) => {
   res.sendFile(path.join(viewsPath, 'gameOver.html'))
 })
 
+router.get('/logs', (req, res) => {
+  res.sendFile(path.join(viewsPath, 'logs.html'))
+})
+
 module.exports = router
