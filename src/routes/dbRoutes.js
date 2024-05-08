@@ -13,6 +13,10 @@ const { removePlayerFromRoomByNickname } = require('../controllers/roomControlle
 const { userIsInRoom } = require('../controllers/roomController')
 const { setNumRounds } = require('../controllers/roomController')
 const { setTimePerRound } = require('../controllers/roomController')
+const { addRoundsToRoom } = require('../controllers/roomController')
+const { getRoundID } = require('../controllers/roomController')
+const { insertBookEntries } = require('../controllers/roomController')
+const { getRoomRounds } = require('../controllers/roomController')
 
 router.post('/create-room', createRoom)
 router.post('/join-room', joinRoom)
@@ -26,5 +30,9 @@ router.post('/remove-player-from-room-by-user-nickname/:userNickname/:roomID', r
 router.get('/user-is-in-room/:roomID/:userID', userIsInRoom)
 router.post('/set-num-rounds/:roomID/:numRounds', setNumRounds)
 router.post('/set-time-per-round/:roomID/:timePerRound', setTimePerRound)
+router.post('/add-round-objects/:roomID/:numRounds', addRoundsToRoom)
+router.get('/get-round-id/:roomID/:roundNumber', getRoundID)
+router.post('/add-all-texts-and-draws/:kingArthursRoundTable/:roundIdList/:userIDs', insertBookEntries)
+router.get('/get-room-rounds', getRoomRounds)
 
 module.exports = router
