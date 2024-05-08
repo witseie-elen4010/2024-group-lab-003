@@ -2,7 +2,7 @@
 const queryParams = new URLSearchParams(window.location.search)
 const roomId = queryParams.get('roomId')
 const userId = queryParams.get('userId')
-const round = queryParams.get('round')
+let round = queryParams.get('round')
 
 let roundId
 let text
@@ -159,7 +159,7 @@ function startRound () {
             }
           })
           .then(() => {
-            this.round = Number(round) + 1
+            round = Number(round) + 1
             // Increment round players
             fetch(`/api/increment-round-players/${roomId}/${round}`, {
               method: 'POST'
