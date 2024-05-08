@@ -32,7 +32,7 @@ const drawingSchema = new mongoose.Schema({
   bookUser: { type: mongoose.Schema.Types.ObjectId, required: true },
   textPrompt: { type: mongoose.Schema.Types.ObjectId, ref: 'TextPrompt', required: false },
   drawerUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  imageData: { type: String, required: false } // Storing image data as URL or file path
+  imageData: { type: Buffer, required: false } // Updated to store binary data
 })
 
 const textingSchema = new mongoose.Schema({

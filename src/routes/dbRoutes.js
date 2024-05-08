@@ -1,6 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
+const multer = require('multer')
+const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }) // Limit to 10MB
+
 const { createRoom } = require('../controllers/roomController')
 const { joinRoom } = require('../controllers/roomController')
 const { getRoomPlayers } = require('../controllers/roomController')
@@ -25,6 +28,9 @@ const { checkAllPlayersReady } = require('../controllers/roomController')
 const { getPlayersByRoomId } = require('../controllers/roomController')
 const { getRoomRoundsByRoomId } = require('../controllers/roomController')
 const { getFinalText } = require('../controllers/roomController')
+const { addImage } = require('../controllers/roomController')
+const { getBookUserIdFromText } = require('../controllers/roomController')
+const { getDrawing } = require('../controllers/roomController')
 
 router.post('/create-room', createRoom)
 router.post('/join-room', joinRoom)
@@ -50,5 +56,9 @@ router.get('/round-is-ready/:roomId/:roundNum', checkAllPlayersReady)
 router.get('/get-users-by-room-id/:roomId', getPlayersByRoomId)
 router.get('/get-room-rounds-by-room-id/:roomId', getRoomRoundsByRoomId)
 router.get('/get-final-test/:roundId/:bookUserId', getFinalText)
+router.get('/get-user-book-id-from-text/:roundId/:textUserId', getBookUserIdFromText)
+
+router.post('/addImageToDrawing', upload.single('image'), addImage)
+router.get('/get-drawing/:roundId/:bookUserId', getDrawing)
 
 module.exports = router

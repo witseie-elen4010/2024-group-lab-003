@@ -497,9 +497,6 @@ async function addTextDescription (req, res) {
 async function getText (req, res) {
   const { roundId, bookUserId } = req.params // Assuming roundId and bookUserId are passed as URL parameters
 
-  console.log(roundId)
-  console.log(bookUserId)
-
   try {
     const textEntry = await Texting.findOne({
       round: roundId,
@@ -507,7 +504,6 @@ async function getText (req, res) {
     }).exec() // Fetching the Texting document based on roundId and bookUserId
 
     console.log(textEntry.textData)
-    console.log('')
 
     if (!textEntry) {
       return res
@@ -532,15 +528,44 @@ async function getBookUserIdFromDraw (req, res) {
     // Find the Texting entry with the specified roundId and textUserId
     const drawingEntry = await Drawing.findOne({ round: roundId, drawerUser: drawUserId })
 
-    console.log('Here')
-    console.log(drawingEntry.bookUser)
-
     if (!drawingEntry) {
       return res.status(404).json({ success: false, message: 'Text entry not found' })
     }
 
     // Assuming bookUser is the intended output, though your schema indicates this might be from a different logic
     const bookUserId = drawingEntry.bookUser
+    if (!bookUserId) {
+      return res.status(404).json({ success: false, message: 'Book user not found for the provided IDs' })
+    }
+
+    // Respond with the bookUserId
+    res.json({
+      success: true,
+      message: 'Book user ID retrieved successfully',
+      bookUser: bookUserId
+    })
+  } catch (error) {
+    console.error('Error retrieving book user ID:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+async function getBookUserIdFromText (req, res) {
+  const { roundId, textUserId } = req.params // Extract roundId and textUserId from request parameters
+
+  console.log(roundId)
+  console.log(textUserId)
+
+  try {
+    // Find the Texting entry with the specified roundId and textUserId
+    const textingEntry = await Texting.findOne({ round: roundId, textUser: textUserId })
+
+    if (!textingEntry) {
+      return res.status(404).json({ success: false, message: 'Text entry not found' })
+    }
+
+    // Assuming bookUser is the intended output, though your schema indicates this might be from a different logic
+    const bookUserId = textingEntry.bookUser
     if (!bookUserId) {
       return res.status(404).json({ success: false, message: 'Book user not found for the provided IDs' })
     }
@@ -587,13 +612,9 @@ async function incrementPlayersReadyInRound (req, res) {
 async function checkAllPlayersReady (req, res) {
   const { roomId, roundNum } = req.params // Extract the room ID and round number from request parameters
 
-  console.log(roomId)
-  console.log(roundNum)
-
   try {
     // Find the round based on roomID and roundNumber
     const round = await Round.findOne({ room: roomId, roundNumber: roundNum })
-    console.log(round.totalPlayers)
     if (!round) {
       return res.status(404).json({ success: false, message: 'Round not found' })
     }
@@ -695,6 +716,63 @@ async function getFinalText (req, res) {
   }
 }
 
+async function addImage (req, res) {
+  const { userId, roundId } = req.body
+  const imageFile = req.file // Accessed via multer
+
+  console.log(imageFile.buffer)
+
+  if (!imageFile) {
+    return res.status(400).json({ success: false, message: 'No image file provided' })
+  }
+
+  try {
+    const buffer = imageFile.buffer // Access the buffer from the uploaded file
+
+    const updatedDrawing = await Drawing.findOneAndUpdate(
+      { round: roundId, drawerUser: userId },
+      { imageData: buffer },
+      { upsert: true, new: true, runValidators: true }
+    )
+
+    res.json({
+      success: true,
+      message: 'Image added successfully',
+      drawing: updatedDrawing
+    })
+  } catch (error) {
+    console.error('Error adding image:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+async function getDrawing (req, res) {
+  const { roundId, bookUserId } = req.params // Assuming roundId and bookUserId are passed as URL parameters
+
+  console.log(roundId)
+  console.log(bookUserId)
+
+  try {
+    const drawingEntry = await Drawing.findOne({
+      round: roundId,
+      bookUser: bookUserId
+    }).exec() // Fetching the Texting document based on roundId and bookUserId
+
+    console.log(drawingEntry.imageData)
+
+    if (!drawingEntry) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Text entry not found' })
+    }
+
+    res.json({ success: true, imageData: drawingEntry.imageData })
+  } catch (error) {
+    console.error('Error fetching text data:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -719,5 +797,8 @@ module.exports = {
   checkAllPlayersReady,
   getPlayersByRoomId,
   getRoomRoundsByRoomId,
-  getFinalText
+  getFinalText,
+  addImage,
+  getBookUserIdFromText,
+  getDrawing
 }
