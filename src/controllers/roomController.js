@@ -639,6 +639,83 @@ async function checkAllPlayersReady (req, res) {
   }
 }
 
+async function getPlayersByRoomId (req, res) {
+  const roomId = req.params.roomId // Use req.params to access the room ID from the route
+  console.log(`Room ID is ${roomId}`)
+  try {
+    // First, find the room to ensure it exists
+    const roomExists = await Room.findById(roomId)
+    if (!roomExists) {
+      console.log('No room found for code:', roomId)
+      res.status(404).json({ success: false, message: 'Room not found' })
+      return
+    }
+
+    // Then, fetch all players associated with this room
+    const players = await RoomPlayer.find({ room: roomId })
+      .select('nickname isAdmin user') // Only select fields needed
+
+    res.json({
+      success: true,
+      players: players.map(player => ({
+        userId: player.user, // Access user ID directly
+        nickname: player.nickname,
+        isAdmin: player.isAdmin
+      }))
+    })
+  } catch (error) {
+    console.error('Error fetching room players:', error)
+    res.status(500).json({ success: false, error: 'Internal server error' })
+  }
+}
+
+async function getRoomRoundsByRoomId (req, res) {
+  const { roomId } = req.query
+  try {
+    // First, find the room to ensure it exists
+    const room = await Room.findOne({ roomId })
+    if (!room) {
+      console.log('No room found for code:', roomId)
+      res.status(404).json({ success: false, message: 'Room not found' })
+      return
+    }
+
+    // Then, fetch all rounds associated with this room
+    const rounds = await Round.find({ room: room._id })
+
+    res.json({
+      success: true,
+      rounds: rounds.map(round => ({
+        id: round._id, // Map directly in the response
+        bookUser: round.bookUser
+      }))
+    })
+  } catch (error) {
+    console.error('Error fetching rounds:', error)
+    res.status(500).json({ success: false, error: 'Internal server error' })
+  }
+}
+
+async function getFinalText (req, res) {
+  const { roundId, bookUserId } = req.params
+  console.log(`roundID: ${roundId}, bookUserId: ${bookUserId}`)
+  try {
+    const textEntry = await Texting.findOne({
+      round: roundId,
+      bookUser: bookUserId
+    }).exec()
+
+    if (!textEntry) {
+      return res.status(404).json({ success: false, message: 'Text entry not found' })
+    }
+
+    res.json({ success: true, textData: textEntry.textData })
+  } catch (error) {
+    console.error('Error fetching text data:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 async function addImage (req, res) {
   const { userId, roundId } = req.body
   const imageFile = req.file // Accessed via multer
@@ -718,6 +795,9 @@ module.exports = {
   getBookUserIdFromDraw,
   incrementPlayersReadyInRound,
   checkAllPlayersReady,
+  getPlayersByRoomId,
+  getRoomRoundsByRoomId,
+  getFinalText,
   addImage,
   getBookUserIdFromText,
   getDrawing
