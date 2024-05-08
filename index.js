@@ -15,6 +15,16 @@ mongoose.connect(process.env.MONGO_URI)
 
 const PORT = process.env.PORT || 3000
 
+app.post('/verify-password', (req, res) => {
+  const { password } = req.body
+
+  if (password === process.env.ADMIN) {
+    res.sendStatus(200) // OK
+  } else {
+    res.sendStatus(401) // Unauthorized
+  }
+})
+
 // Import the routes from the mainRoutes.js file located in the src/routes directory
 const routes = require('./src/routes/mainRoutes.js')
 
