@@ -698,7 +698,6 @@ async function getRoomRoundsByRoomId (req, res) {
 
 async function getFinalText (req, res) {
   const { roundId, bookUserId } = req.params
-  console.log(`roundID: ${roundId}, bookUserId: ${bookUserId}`)
   try {
     const textEntry = await Texting.findOne({
       round: roundId,
