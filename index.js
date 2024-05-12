@@ -25,11 +25,13 @@ app.use(logger('dev'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
 
+const PORT = process.env.PORT || 3000
+
 const config = {
   authRequired: false,
   auth0Logout: true,
   secret: process.env.SECRET,
-  baseURL: process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
+  baseURL: process.env.BASE_URL || `http://localhost:${PORT}`,
   clientID: process.env.CLIENT_ID,
   issuerBaseURL: process.env.ISSUER_BASE_URL
 }
@@ -65,8 +67,6 @@ app.use(function (err, req, res, next) {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.log('MongoDB connection error:', err))
-
-const PORT = process.env.PORT || 3000
 
 app.post('/verify-password', (req, res) => {
   const { password } = req.body
