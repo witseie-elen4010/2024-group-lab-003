@@ -8,6 +8,12 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment: env  # If using GitHub environment to manage secrets
+    env:
+      SECRET: ${{ secrets.SECRET }}
+      ISSUER_BASE_URL: ${{ secrets.ISSUER_BASE_URL }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      PORT: ${{ secrets.PORT }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -25,3 +31,4 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+        
