@@ -1,115 +1,115 @@
-// // Import the necessary modules
-// const { joinRoom } = require('../src/controllers/roomController')
-// const { Room, RoomPlayer, User } = require('../src/services/dbSchema')
+// Import the necessary modules
+const { joinRoom } = require('../src/controllers/roomController')
+const { Room, RoomPlayer, User } = require('../src/services/dbSchema')
 
-// // Mocking Mongoose methods and Express response
-// jest.mock('../src/services/dbSchema')
-// jest.mock('../src/services/dbSchema')
-// jest.mock('../src/services/dbSchema')
+// Mocking Mongoose methods and Express response
+jest.mock('../src/services/dbSchema')
+jest.mock('../src/services/dbSchema')
+jest.mock('../src/services/dbSchema')
 
-// describe('joinRoom function', () => {
-//   // Mock Express request and response objects
-//   let req, res
+describe('joinRoom function', () => {
+  // Mock Express request and response objects
+  let req, res
 
-//   beforeEach(() => {
-//     req = {
-//       body: {
-//         email: 'test@example.com',
-//         password: 'hashedpassword',
-//         roomCode: '12345',
-//         nickname: 'Tester'
-//       }
-//     }
-//     res = {
-//       json: jest.fn(),
-//       status: jest.fn().mockReturnThis()
-//     }
-//   })
+  beforeEach(() => {
+    req = {
+      body: {
+        email: 'test@example.com',
+        password: 'hashedpassword',
+        roomCode: '12345',
+        nickname: 'Tester'
+      }
+    }
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+  })
 
-//   afterEach(() => {
-//     jest.clearAllMocks()
-//   })
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
-//   test('should respond with 404 if room not found', async () => {
-//     Room.findOne.mockResolvedValue(null)
+  test('should respond with 404 if room not found', async () => {
+    Room.findOne.mockResolvedValue(null)
 
-//     await joinRoom(req, res)
+    await joinRoom(req, res)
 
-//     expect(res.status).toHaveBeenCalledWith(404)
-//     expect(res.json).toHaveBeenCalledWith({
-//       success: false,
-//       message: 'Room not found'
-//     })
-//   })
+    expect(res.status).toHaveBeenCalledWith(404)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Room not found'
+    })
+  })
 
-//   test('should handle errors correctly', async () => {
-//     Room.findOne.mockRejectedValue(new Error('Internal server error'))
+  test('should handle errors correctly', async () => {
+    Room.findOne.mockRejectedValue(new Error('Internal server error'))
 
-//     await joinRoom(req, res)
+    await joinRoom(req, res)
 
-//     expect(res.status).toHaveBeenCalledWith(500)
-//     expect(res.json).toHaveBeenCalledWith({
-//       success: false,
-//       error: 'Internal server error'
-//     })
-//   })
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      error: 'Internal server error'
+    })
+  })
 
-//   // Add more tests here for other scenarios, like existing user joining the room, etc.
-// })
+  // Add more tests here for other scenarios, like existing user joining the room, etc.
+})
 
-// // Import the necessary modules
-// const { createRoom } = require('../src/controllers/roomController')
-// const generateRoomCode = jest.fn()
+// Import the necessary modules
+const { createRoom } = require('../src/controllers/roomController')
+const generateRoomCode = jest.fn()
 
-// describe('createRoom function', () => {
-//   let req, res
+describe('createRoom function', () => {
+  let req, res
 
-//   beforeEach(() => {
-//     req = {
-//       body: {
-//         email: 'test@example.com',
-//         password: 'hashedpassword',
-//         nickname: 'Tester'
-//       }
-//     }
-//     res = {
-//       send: jest.fn(),
-//       status: jest.fn().mockReturnThis()
-//     }
-//     generateRoomCode.mockResolvedValue('ROOM123')
-//   })
+  beforeEach(() => {
+    req = {
+      body: {
+        email: 'test@example.com',
+        password: 'hashedpassword',
+        nickname: 'Tester'
+      }
+    }
+    res = {
+      send: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+    generateRoomCode.mockResolvedValue('ROOM123')
+  })
 
-//   afterEach(() => {
-//     jest.clearAllMocks()
-//   })
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
-//   test('should create a room and respond with 201', async () => {
-//     await createRoom(req, res)
+  test('should create a room and respond with 201', async () => {
+    await createRoom(req, res)
 
-//     expect(User.prototype.save).toHaveBeenCalled()
-//     expect(Room.prototype.save).toHaveBeenCalled()
-//     expect(RoomPlayer.prototype.save).toHaveBeenCalled()
-//     console.log('akiva:' + res.send.mock.calls)
-//     // expect(res.status).toHaveBeenCalledWith(201)
-//     // expect(res.send).toHaveBeenCalledWith({
-//     //   roomCode: 'ROOM123',
-//     //   userId: expect.any(String),
-//     //   message: 'Room created successfully!'
-//     // })
-//   })
+    expect(User.prototype.save).toHaveBeenCalled()
+    expect(Room.prototype.save).toHaveBeenCalled()
+    expect(RoomPlayer.prototype.save).toHaveBeenCalled()
+    console.log('akiva:' + res.send.mock.calls)
+    // expect(res.status).toHaveBeenCalledWith(201)
+    // expect(res.send).toHaveBeenCalledWith({
+    //   roomCode: 'ROOM123',
+    //   userId: expect.any(String),
+    //   message: 'Room created successfully!'
+    // })
+  })
 
-//   test('should handle errors if there is a problem saving the user', async () => {
-//     User.prototype.save.mockRejectedValue(new Error('Error saving user'))
+  test('should handle errors if there is a problem saving the user', async () => {
+    User.prototype.save.mockRejectedValue(new Error('Error saving user'))
 
-//     await createRoom(req, res)
+    await createRoom(req, res)
 
-//     expect(res.status).toHaveBeenCalledWith(500)
-//     expect(res.send).toHaveBeenCalledWith({
-//       message: 'Error creating room',
-//       error: 'Error: Error saving user'
-//     })
-//   })
-// })
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.send).toHaveBeenCalledWith({
+      message: 'Error creating room',
+      error: 'Error: Error saving user'
+    })
+  })
+})
 
 // // Import the function to test
 // const { getRoomPlayers } = require('../src/controllers/roomController')
