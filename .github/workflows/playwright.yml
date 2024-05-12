@@ -23,6 +23,7 @@ jobs:
         SECRET: ${{ secrets.SECRET }}
         ISSUER_BASE_URL: ${{ secrets.ISSUER_BASE_URL }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        PORT: ${{ secrets.PORT }}
     - uses: actions/upload-artifact@v4
       if: always()
       with:
