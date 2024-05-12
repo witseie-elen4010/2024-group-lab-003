@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 3000
 const config = {
   authRequired: false,
   auth0Logout: true,
-  secret: process.env.SECRET,
+  secret: 'Je-6qVCAR7EXrmwYjRVBnU9hwEIdLdMjekpszWscnXCBC1HOfXDhpv4vvWzZdYlI',
   baseURL: process.env.BASE_URL || `http://localhost:${PORT}`,
   clientID: process.env.CLIENT_ID,
   issuerBaseURL: process.env.ISSUER_BASE_URL
