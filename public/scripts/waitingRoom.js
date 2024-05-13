@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const buttonContainer = document.createElement('div')
     buttonContainer.style.display = 'flex'
     buttonContainer.style.position = 'absolute'
-    buttonContainer.style.top = '1rem'
+    buttonContainer.style.bottom = '1rem'
     buttonContainer.style.right = '1rem'
     buttonContainer.style.gap = '10px' // Adjust this value as needed for spacing
 
