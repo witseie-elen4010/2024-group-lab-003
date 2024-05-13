@@ -1,7 +1,7 @@
 
 /* Custom styles */
 .full-height {
-    min-height: 100vh; /* Full screen height */
+    min-height: 100%; /* Full screen height */
 }
 .flex-column-between {
     display: flex;
