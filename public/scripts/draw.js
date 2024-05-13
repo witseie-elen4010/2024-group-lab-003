@@ -144,7 +144,7 @@ function startRound () {
 
         // Add additional parameters if needed
         formData.append('userId', userId) // Ensure the userId is correctly assigned
-        formData.append('roundId', roomId) // Ensure the roundId is correctly assigned
+        formData.append('roundId', roundId) // Ensure the roundId is correctly assigned
 
         // Send the formData with the file to your server endpoint
         fetch('/api/addImageToDrawing', {
