@@ -11,43 +11,26 @@ document.addEventListener('DOMContentLoaded', function () {
   let round = getQueryParam('round')
 
   let roundId
+  let totalRounds
+  let timeLimit
+
+  // if not the first round then get room metadata from thr URL
+  if (round > 1) {
+    totalRounds = getQueryParam('totalRounds')
+    timeLimit = getQueryParam('timeLimit')
+  }
+
+  const defaultDescriptions = ['Stephen Levitt riding a turtle', 'Stephen Levitt is a turtle', 'Stephen Levitt']
 
   // Log the parameters to console (you can remove this in production)
   console.log(`Room ID: ${roomId}, User ID: ${userId}, Round: ${round}`)
 
-  function displayImageFromBlob (data, imageElementId) {
-    const img = document.getElementById(imageElementId)
-    if (!img) {
-      console.error('Image element not found')
-      return
-    }
-
-    try {
-      if (data && data.length > 0) {
-        // Assuming data is an array of byte values
-        const blob = new Blob([new Uint8Array(data)], { type: 'image/png' })
-        const url = URL.createObjectURL(blob)
-        img.src = url
-        img.onload = () => URL.revokeObjectURL(url) // Clean up after load
-      } else {
-        // No data received, set image to a black placeholder
-        img.src = createBlackImageDataURL()
-        console.log('No valid image data received, displaying black placeholder.')
-      }
-    } catch (error) {
-      console.error('Error displaying image:', error)
-      img.src = createBlackImageDataURL() // Fallback to black image on error
-    }
-  }
-
-  function createBlackImageDataURL () {
-    const canvas = document.createElement('canvas')
-    canvas.width = 100
-    canvas.height = 100
-    const ctx = canvas.getContext('2d')
-    ctx.fillStyle = 'black'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    return canvas.toDataURL('image/png')
+  function setupRoundTimer (duration) {
+    setTimeout(function () {
+      // Assuming you have a button to end the round that can be identified by an ID
+      document.getElementById('endRoundButton').click()
+      console.log('Timer completed, round ending.')
+    }, duration * 1000) // Convert timeLimit to milliseconds
   }
 
   // Check if the round has started
@@ -71,7 +54,31 @@ document.addEventListener('DOMContentLoaded', function () {
           if (ready || round === '1') {
             console.log(ready)
             clearInterval(checkInterval) // Stop the polling
-            startRound() // Function to proceed with the game
+            // fetch room metadata
+            if (round === '1') {
+              fetch(`/api/get-room-data/${roomId}`)
+                .then(response => {
+                  if (response.ok) {
+                    return response.json() // Parse the JSON response if successful
+                  } else {
+                    throw new Error('Failed to fetch reroom metadata') // Throw an error if response not OK
+                  }
+                })
+                .then(data => {
+                  if (data.success) {
+                    totalRounds = data.totalRounds // Set the round ID
+                    timeLimit = data.timeLimit
+                    console.log(`total round: ${totalRounds}`)
+                    console.log(`time limit: ${timeLimit}`)
+                    // once you have the room metadata start the round
+                    startRound()
+                  } else {
+                    console.error('Fetch successful but API returned an error for round:', round)
+                  }
+                })
+            } else {
+              startRound()
+            }
           }
         } else {
           console.error('Fetch successful but API returned an error for round:', round)
@@ -102,8 +109,10 @@ document.addEventListener('DOMContentLoaded', function () {
           roundId = data.roundID // Set the round ID
           let bookUserId
           console.log(`user id: ${userId}`)
+          console.log(`round id: ${roundId}`)
 
           if (round > 1) {
+            console.log(`Got into the if with round: ${round}`)
             fetch(`/api/get-user-book-id-from-text/${roundId}/${userId}`)
               .then(response => {
                 if (response.ok) {
@@ -129,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
                       if (data.success) {
                         const preRoundId = data.roundID // Set the round ID
 
-                        // get the prev drawing
+                        // Fetching the previous drawing
                         fetch(`/api/get-drawing/${preRoundId}/${bookUserId}`)
                           .then(response => {
                             if (response.ok) {
@@ -140,9 +149,10 @@ document.addEventListener('DOMContentLoaded', function () {
                           })
                           .then(data => {
                             if (data.success) {
-                              const imageBlob = data.imageData // Set the round ID
-                              console.log(imageBlob)
-                              displayImageFromBlob(imageBlob, 'imageBox')
+                              const base64Image = data.imageData // Get the Base64 string
+                              console.log(`Image Base64: ${base64Image}`) // Log the Base64 string for debugging
+                              // displayImageFromBase64(base64Image, 'imageBox') // Displaying the image using a custom function
+                              setupRoundTimer(timeLimit)
                             } else {
                               console.error('Fetch successful but API returned an error for round:', round - 1)
                             }
@@ -164,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
               .catch(error => {
                 console.error('Error fetching round ID for round', round - 1, ':', error)
               })
+          } else {
+            setupRoundTimer(timeLimit)
           }
         } else {
           console.error('Fetch successful but API returned an error for round:', round)
@@ -179,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
       event.preventDefault() // Prevent the form from submitting normally
 
       // You can add actions here, like sending data to a server or updating the interface
-      const inputText = document.getElementById('inputText').value
+      let inputText = document.getElementById('inputText').value
       console.log('Submitted text:', inputText)
       let roundId
 
@@ -195,7 +207,12 @@ document.addEventListener('DOMContentLoaded', function () {
           if (data.success) {
             roundId = data.roundID
 
-            // First, perform the initial POST request to add round objects.
+            if (!inputText) {
+              const randomIndex = Math.floor(Math.random() * defaultDescriptions.length)
+              inputText = defaultDescriptions[randomIndex]
+            }
+
+            // First, perform the initial POST request to add description.
             fetch(`/api/add-description/${userId}/${roundId}/${inputText}`, {
               method: 'POST'
             })
@@ -203,11 +220,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.ok) {
                   return response.json() // Parsing the JSON response if successful
                 } else {
-                  throw new Error('Failed to add rounds.') // Throw error if response not OK
+                  throw new Error('Failed to add description.') // Throw error if response not OK
                 }
               })
               .then(() => {
+                console.log(`attempting to check if last round with current round: ${round}, and totRounds: ${totalRounds}, equality check: ${round === totalRounds}`)
+                if (round === totalRounds) {
+                  window.location.href = `/gameOver?roomId=${encodeURIComponent(roomId)}`
+                  return
+                }
                 round = Number(round) + 1
+                // if the last round end the game
                 console.log(`Round Description is incrementing: ${round}`)
                 // increment round players
                 fetch(`/api/increment-round-players/${roomId}/${round}`, {
@@ -221,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                   })
                   .then(() => {
-                    window.location.href = `/drawing?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}`
+                    window.location.href = `/drawing?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}&totalRounds=${encodeURIComponent(totalRounds)}&timeLimit=${encodeURIComponent(timeLimit)}`
                   })
               })
           } else {

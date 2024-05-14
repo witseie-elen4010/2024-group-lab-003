@@ -7,9 +7,20 @@ let round = queryParams.get('round')
 let roundId
 let text
 
+const totalRounds = queryParams.get('totalRounds')
+const timeLimit = queryParams.get('timeLimit')
+
 console.log(roomId)
 console.log(round)
 console.log('waiting...')
+
+function setupRoundTimer (duration) {
+  setTimeout(function () {
+    // Assuming you have a button to end the round that can be identified by an ID
+    document.getElementById('submitDrawing').click()
+    console.log('Timer completed, round ending.')
+  }, duration * 1000) // Convert timeLimit to milliseconds
+}
 
 // Check if the round has started
 // Function to check if all players are ready
@@ -57,6 +68,7 @@ function startRound () {
     .then(data => {
       if (data.success) {
         roundId = data.roundID // Set the round ID
+        console.log(`RoundID: ${roundId}`)
         let bookUserId
 
         // get BookUserId
@@ -99,6 +111,7 @@ function startRound () {
                           text = data.textData // Set the round ID
                           console.log(text)
                           document.getElementById('drawingTitle').textContent = text // Update the heading text
+                          setupRoundTimer(timeLimit)
                         } else {
                           console.error('Fetch successful but API returned an error for round:', round - 1)
                         }
@@ -144,7 +157,7 @@ function startRound () {
 
         // Add additional parameters if needed
         formData.append('userId', userId) // Ensure the userId is correctly assigned
-        formData.append('roundId', roomId) // Ensure the roundId is correctly assigned
+        formData.append('roundId', roundId) // Ensure the roundId is correctly assigned
 
         // Send the formData with the file to your server endpoint
         fetch('/api/addImageToDrawing', {
@@ -159,6 +172,12 @@ function startRound () {
             }
           })
           .then(() => {
+            // if the last round end the game
+            if (round === totalRounds) {
+              window.location.href = `/gameOver?roomId=${encodeURIComponent(roomId)}`
+              return
+            }
+            // increment round
             round = Number(round) + 1
             // Increment round players
             fetch(`/api/increment-round-players/${roomId}/${round}`, {
@@ -172,7 +191,7 @@ function startRound () {
                 }
               })
               .then(() => {
-                window.location.href = `/description?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}`
+                window.location.href = `/description?roomId=${encodeURIComponent(roomId)}&userId=${encodeURIComponent(userId)}&round=${encodeURIComponent(round)}&totalRounds=${encodeURIComponent(totalRounds)}&timeLimit=${encodeURIComponent(timeLimit)}`
               })
           })
           .catch(error => console.error('Error:', error)) // Log or handle errors appropriately
