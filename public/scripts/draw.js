@@ -202,8 +202,8 @@ function startRound () {
   const ctx = canvas.getContext('2d')
 
   // Set up the default pen color and width
-  let penColor = '#000000'
-  const penWidth = 5
+  let penColor = '#0000FF'
+  let penWidth = 5
   let painting = false
   let undoStack = []
   let redoStack = []
@@ -261,6 +261,15 @@ function startRound () {
     changeColor(this.value)
   })
 
+  document.querySelector('.small').addEventListener('click', function () {
+    penWidth = this.dataset.value
+  })
+  document.querySelector('.medium').addEventListener('click', function () {
+    penWidth = this.dataset.value
+  })
+  document.querySelector('.large').addEventListener('click', function () {
+    penWidth = this.dataset.value
+  })
   document.getElementById('save').addEventListener('click', saveDrawing)
   document.getElementById('undo').addEventListener('click', undoDrawing)
   document.getElementById('redo').addEventListener('click', redoDrawing)
