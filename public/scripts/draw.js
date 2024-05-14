@@ -14,6 +14,42 @@ console.log(roomId)
 console.log(round)
 console.log('waiting...')
 
+let overlay
+
+function createWaitingOverlay () {
+  overlay = document.createElement('div')
+  overlay.setAttribute('id', 'waitingOverlay')
+  overlay.style.position = 'fixed'
+  overlay.style.top = '0'
+  overlay.style.left = '0'
+  overlay.style.width = '100%'
+  overlay.style.height = '100%'
+  overlay.style.backgroundColor = 'rgba(0, 0, 140, 1)' // Blue semi-transparent background
+  overlay.style.color = 'white'
+  overlay.style.display = 'flex'
+  overlay.style.flexDirection = 'column'
+  overlay.style.justifyContent = 'center'
+  overlay.style.alignItems = 'center'
+  overlay.style.zIndex = '1500' // Ensure it is on top of other elements
+
+  const loadingGif = document.createElement('img')
+  loadingGif.src = './../images/roundLoader.gif'
+  loadingGif.alt = 'Loading...'
+  loadingGif.style.width = '80px'
+  loadingGif.style.height = '80px'
+  loadingGif.style.marginBottom = '20px'
+
+  const loadingText = document.createElement('div')
+  loadingText.textContent = 'Waiting For Round To Begin'
+  loadingText.style.fontSize = '20px'
+  loadingText.style.fontWeight = 'bold'
+
+  overlay.appendChild(loadingGif)
+  overlay.appendChild(loadingText)
+  document.body.appendChild(overlay)
+}
+createWaitingOverlay()
+
 function setupRoundTimer (duration) {
   const startTime = Date.now() // Record the start time
   const endTime = startTime + duration * 1000 // Calculate end time in milliseconds
@@ -123,6 +159,13 @@ function startRound () {
                           text = data.textData // Set the round ID
                           console.log(text)
                           document.getElementById('drawingTitle').textContent = text // Update the heading text
+                          // remove loading overlay
+                          const overlayElement = document.getElementById('waitingOverlay')
+                          if (overlayElement) {
+                            overlayElement.remove()
+                          } else {
+                            console.error('Overlay not found')
+                          }
                           setupRoundTimer(timeLimit)
                         } else {
                           console.error('Fetch successful but API returned an error for round:', round - 1)

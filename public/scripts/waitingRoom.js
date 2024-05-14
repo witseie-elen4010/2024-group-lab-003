@@ -199,6 +199,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     settingsView.appendChild(selectedTimeLabel)
 
     startGameButton.addEventListener('click', function () {
+      // Display a loading screen
+      const overlay = document.createElement('div')
+      overlay.style.position = 'fixed'
+      overlay.style.top = '0'
+      overlay.style.left = '0'
+      overlay.style.width = '100%'
+      overlay.style.height = '100%'
+      overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+      overlay.style.display = 'flex'
+      overlay.style.justifyContent = 'center'
+      overlay.style.alignItems = 'center'
+      overlay.style.zIndex = '1000' // Ensure it is on top of other elements
+
+      const loadingGif = document.createElement('img')
+      loadingGif.src = './../images/loading15.gif'
+      loadingGif.style.width = '100px'
+      loadingGif.style.height = '100px'
+
+      overlay.appendChild(loadingGif)
+      document.body.appendChild(overlay)
+
       const numRounds = roundsInput.value
       const timePerRound = timeLimitSlider.value
       numberRounds = numRounds
