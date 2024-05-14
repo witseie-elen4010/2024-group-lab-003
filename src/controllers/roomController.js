@@ -478,7 +478,10 @@ async function addTextDescription (req, res) {
     // Create or update a texting document
     const updatedTexting = await Texting.findOneAndUpdate(
       { round: roundId, textUser: userId },
-      { textData: text },
+      {
+        textData: text,
+        $set: { createTime: Date.now() } // Update createTime to current time
+      },
       { upsert: true, new: true, runValidators: true }
     )
 
@@ -714,7 +717,10 @@ async function addImage (req, res) {
 
     const updatedDrawing = await Drawing.findOneAndUpdate(
       { round: roundId, drawerUser: userId },
-      { imageData: buffer },
+      {
+        imageData: buffer,
+        $set: { createTime: Date.now() } // Update createTime to current time
+      },
       { upsert: true, new: true, runValidators: true }
     )
 
@@ -725,7 +731,7 @@ async function addImage (req, res) {
     })
   } catch (error) {
     console.error('Error adding image:', error)
-    res.status(500).json({ success: false, message: 'Internal server error' })
+    res.status(500).json({ success: false, message: 'Internal server problems' })
   }
 }
 
@@ -755,14 +761,15 @@ async function getDrawing (req, res) {
 
 async function fetchAllRoomPlayers (req, res) {
   try {
-    // Then, fetch all players associated with this room and populate user details
-    const players = await RoomPlayer.find({ }).populate('user', 'email') // Populate only the email field from User
+    // Fetch all players associated with this room and populate user details
+    const players = await RoomPlayer.find({}).populate('user', 'email') // Populate only the email field from User
 
-    // Map over the players to extract necessary data
+    // Map over the players to extract necessary data including the createTime
     const playerData = players.map(p => ({
       nickname: p.nickname,
       isAdmin: p.isAdmin,
-      email: p.user.email // Access the populated email field
+      email: p.user.email, // Access the populated email field
+      createTime: p.createTime // Include createTime in the response
     }))
 
     res.json({
@@ -818,6 +825,64 @@ async function getRoomMetadata (req, res) {
   }
 }
 
+async function fetchAllDrawings (req, res) {
+  try {
+    const drawings = await Drawing.aggregate([
+      {
+        $lookup: {
+          from: 'users', // The collection name in the database
+          localField: 'drawerUser', // Field in drawingSchema
+          foreignField: '_id', // Field in userSchema
+          as: 'drawerUserDetails' // Resultant field name for the joined data
+        }
+      },
+      {
+        $unwind: '$drawerUserDetails' // Deconstruct the array to objects
+      },
+      {
+        $project: {
+          createTime: 1,
+          email: '$drawerUserDetails.email' // Only include the email field from the joined user details
+        }
+      }
+    ]).exec()
+
+    res.json({ success: true, drawings })
+  } catch (error) {
+    console.error('Error fetching drawings:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
+async function fetchAllTextings (req, res) {
+  try {
+    const textings = await Texting.aggregate([
+      {
+        $lookup: {
+          from: 'users', // The collection name in the database
+          localField: 'textUser', // Field in textingSchema
+          foreignField: '_id', // Field in userSchema
+          as: 'textUserDetails' // Resultant field name for the joined data
+        }
+      },
+      {
+        $unwind: '$textUserDetails' // Deconstruct the array to objects
+      },
+      {
+        $project: {
+          createTime: 1,
+          email: '$textUserDetails.email' // Only include the email field from the joined user details
+        }
+      }
+    ]).exec()
+
+    res.json({ success: true, textings })
+  } catch (error) {
+    console.error('Error fetching textings:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -848,5 +913,7 @@ module.exports = {
   getDrawing,
   fetchAllRoomPlayers,
   getImageData,
-  getRoomMetadata
+  getRoomMetadata,
+  fetchAllDrawings,
+  fetchAllTextings
 }

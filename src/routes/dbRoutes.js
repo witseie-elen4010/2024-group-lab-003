@@ -34,6 +34,8 @@ const { getDrawing } = require('../controllers/roomController')
 const { fetchAllRoomPlayers } = require('../controllers/roomController')
 const { getImageData } = require('../controllers/roomController')
 const { getRoomMetadata } = require('../controllers/roomController')
+const { fetchAllDrawings } = require('../controllers/roomController')
+const { fetchAllTextings } = require('../controllers/roomController')
 
 router.post('/create-room', createRoom)
 router.post('/join-room', joinRoom)
@@ -66,5 +68,7 @@ router.post('/addImageToDrawing', upload.single('image'), addImage)
 router.get('/get-drawing/:roundId/:bookUserId', getDrawing)
 router.get('/get-all-roomplayers', fetchAllRoomPlayers)
 router.get('/get-room-data/:roomId', getRoomMetadata)
+router.get('/get-all-drawings', fetchAllDrawings)
+router.get('/get-all-textings', fetchAllTextings)
 
 module.exports = router
