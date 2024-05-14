@@ -729,28 +729,6 @@ async function addImage (req, res) {
   }
 }
 
-// async function getDrawing (req, res) {
-//   const { roundId, bookUserId } = req.params // Assuming roundId and bookUserId are passed as URL parameters
-
-//   try {
-//     const drawingEntry = await Drawing.findOne({
-//       round: roundId,
-//       bookUser: bookUserId
-//     }).exec() // Fetching the Texting document based on roundId and bookUserId
-
-//     if (!drawingEntry) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: 'Text entry not found' })
-//     }
-
-//     res.json({ success: true, imageData: drawingEntry.imageData })
-//   } catch (error) {
-//     console.error('Error fetching text data:', error)
-//     res.status(500).json({ success: false, message: 'Internal server error' })
-//   }
-// }
-
 async function getDrawing (req, res) {
   const { roundId, bookUserId } = req.params
 

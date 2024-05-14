@@ -69,6 +69,7 @@ function startRound () {
       if (data.success) {
         roundId = data.roundID // Set the round ID
         console.log(`RoundID: ${roundId}`)
+        console.log(`user ID: ${userId}`)
         let bookUserId
 
         // get BookUserId

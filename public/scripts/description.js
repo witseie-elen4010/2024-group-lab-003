@@ -151,7 +151,17 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (data.success) {
                               const base64Image = data.imageData // Get the Base64 string
                               console.log(`Image Base64: ${base64Image}`) // Log the Base64 string for debugging
-                              // displayImageFromBase64(base64Image, 'imageBox') // Displaying the image using a custom function
+                              const imageElement = document.getElementById('imageBox')
+                              if (imageElement) {
+                                // Set the source of the image
+                                imageElement.src = 'data:image/png;base64,' + base64Image
+                                imageElement.className = 'card-img-top mt-2' // Assign class names for styling
+                                imageElement.alt = 'Loaded Image' // Alt text for accessibility
+                                imageElement.style.width = '400px' // Set the width to 400 pixels
+                                imageElement.style.height = 'auto' // Set the height to scale automatically
+                              } else {
+                                console.error('No element with ID drawingCanvas found.')
+                              }
                               setupRoundTimer(timeLimit)
                             } else {
                               console.error('Fetch successful but API returned an error for round:', round - 1)
@@ -240,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (response.ok) {
                       return response.json() // Parsing the JSON response if successful
                     } else {
-                      throw new Error('Failed to add rounds.') // Throw error if response not OK
+                      throw new Error('Failed to add players to ready.') // Throw error if response not OK
                     }
                   })
                   .then(() => {
