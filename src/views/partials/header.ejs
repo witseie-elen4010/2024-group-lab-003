@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= locals.title || "Express OpenID Connect" %></title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa; /* Light gray background */
+    }
+    .navbar {
+      background-color: #343a40; /* Dark gray */
+    }
+    .navbar-brand, .nav-link {
+      color: #ffffff; /* White text for contrast */
+    }
+    .nav-link:hover {
+      color: #adb5bd; /* Light gray on hover */
+    }
+    .navbar-brand:hover{
+        color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">Doodles All The Way Down</a>
+      <div class="navbar-nav">
+        <a class="nav-link" href="/">Home</a>
+        <% if (locals.user) { %>
+          <a class="nav-link" href="/profile">Profile</a>
+          <a class="nav-link" href="/logout">Logout</a>
+        <% } else { %>
+          <a class="nav-link" href="/login">Login</a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+</body>
+</html>
+

@@ -5,9 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Describe</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .containerdes {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        height: 100%;
+        padding-top: 12%;
+    }
+    .mb-3 {
+        display: flex;
+        gap: 10px;
+    }
+    .form-control {
+        width: 100%;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        height: 50px; /* Adjust this value to increase the height of the input box */
+        font-size: 1.5rem; /* Adjust this value to increase the text size */
+        border: 1px solid #ccc; /* Optional: adds a border to the input box */
+        border-radius: 4px; /* Optional: rounds the corners of the input box */
+    }
+
+    </style>
 </head>
 <body>
-  <div class="container">
+  <div class="containerdes mt-5">
     <div class="row mt-5">
       <div class="col-md-6 offset-md-3">
         <form>
@@ -17,10 +42,10 @@
           </div>
           <!-- Text input for description -->
           <div class="form-group">
-            <label for="inputText">Describe a picture:</label>
-            <input type="text" class="form-control" id="inputText" placeholder="Give your description here">
+            <h2 for="inputText" style="width:270px">Describe Picture:</h2>
+            <input type="text" class="form-control" id="inputText" style="width:300px" placeholder="Give Your Description">
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary" style="justify-content: center">Submit</button>
         </form>
       </div>
     </div>

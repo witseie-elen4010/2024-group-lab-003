@@ -1,0 +1,15 @@
+<%- include('partials/header') -%>
+
+<h1 class="text-4xl mb-4">Welcome <%= user.nickname %></h1>
+<!-- 
+Conditional display of user picture
+<% if (user.picture) { %>
+  <img class="block py-3" src="<%= user.picture %>" width="300">
+<% } %> -->
+
+<!-- Add Delete Account Button -->
+<!-- <form action="/delete-account" method="POST">
+  <button type="submit" class="btn btn-danger">Delete Account</button>
+</form> -->
+
+<%- include('partials/footer') -%>
