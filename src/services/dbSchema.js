@@ -17,7 +17,8 @@ const roomPlayerSchema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   nickname: { type: String, required: true },
-  isAdmin: { type: Boolean, required: true, default: false } // Default value set to false
+  isAdmin: { type: Boolean, required: true, default: false }, // Default value set to false
+  createTime: { type: Date, default: Date.now }
 })
 
 const roundSchema = new mongoose.Schema({
@@ -32,7 +33,8 @@ const drawingSchema = new mongoose.Schema({
   bookUser: { type: mongoose.Schema.Types.ObjectId, required: true },
   textPrompt: { type: mongoose.Schema.Types.ObjectId, ref: 'TextPrompt', required: false },
   drawerUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  imageData: { type: Buffer, required: false } // Updated to store binary data
+  imageData: { type: Buffer, required: false },
+  createTime: { type: Date, required: false }
 })
 
 const textingSchema = new mongoose.Schema({
@@ -40,7 +42,8 @@ const textingSchema = new mongoose.Schema({
   bookUser: { type: mongoose.Schema.Types.ObjectId, required: true },
   imagePrompt: { type: mongoose.Schema.Types.ObjectId, ref: 'TextPrompt' },
   textUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  textData: { type: String, required: false } // Storing image data as URL or file path
+  textData: { type: String, required: false },
+  createTime: { type: Date, required: false }
 })
 
 const User = mongoose.model('User', userSchema)
