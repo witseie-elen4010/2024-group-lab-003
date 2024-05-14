@@ -496,7 +496,6 @@ async function addTextDescription (req, res) {
 
 async function getText (req, res) {
   const { roundId, bookUserId } = req.params // Assuming roundId and bookUserId are passed as URL parameters
-
   try {
     const textEntry = await Texting.findOne({
       round: roundId,
@@ -670,41 +669,34 @@ async function getPlayersByRoomId (req, res) {
 }
 
 async function getRoomRoundsByRoomId (req, res) {
-  const { roomId } = req.query
+  const { roomId } = req.params // Assuming you're passing the room ID as a URL parameter
+
   try {
-    // First, find the room to ensure it exists
-    const room = await Room.findOne({ roomId })
-    if (!room) {
-      console.log('No room found for code:', roomId)
-      res.status(404).json({ success: false, message: 'Room not found' })
-      return
+    const rounds = await Round.find({ room: roomId }).select('_id') // Select only the round IDs
+
+    if (rounds.length === 0) {
+      return res.status(404).json({ success: false, message: 'No rounds found for this room' })
     }
 
-    // Then, fetch all rounds associated with this room
-    const rounds = await Round.find({ room: room._id })
+    const roundIds = rounds.map(round => round._id)
 
-    res.json({
-      success: true,
-      rounds: rounds.map(round => ({
-        id: round._id, // Map directly in the response
-        bookUser: round.bookUser
-      }))
-    })
+    res.json({ success: true, roundIds })
   } catch (error) {
-    console.error('Error fetching rounds:', error)
+    console.error('Error finding rounds by room ID:', error)
     res.status(500).json({ success: false, error: 'Internal server error' })
   }
 }
 
 async function getFinalText (req, res) {
   const { roundId, bookUserId } = req.params
-  console.log(`roundID: ${roundId}, bookUserId: ${bookUserId}`)
+  console.log(`We are now in the DB, with roundId: ${roundId} and bookUserId: ${bookUserId}`)
+
   try {
     const textEntry = await Texting.findOne({
       round: roundId,
       bookUser: bookUserId
     }).exec()
-
+    console.log(`In Db the textEntry is: ${textEntry.textData}`)
     if (!textEntry) {
       return res.status(404).json({ success: false, message: 'Text entry not found' })
     }
@@ -794,6 +786,30 @@ async function fetchAllRoomPlayers (req, res) {
   }
 }
 
+async function getImageData (req, res) {
+  const { roundId, bookUserId } = req.params
+  console.log(`Fetching from DB, with roundId: ${roundId} and bookUserId: ${bookUserId}`)
+
+  try {
+    console.log(`Fetching with roundId: ${roundId} and bookUserId: ${bookUserId}`)
+    const drawingEntry = await Drawing.findOne({
+      round: roundId,
+      bookUser: bookUserId
+    }).exec()
+    console.log('Drawing Entry:', drawingEntry)
+    if (!drawingEntry || !drawingEntry.imageData) {
+      return res.status(404).json({ success: false, message: 'Image not found or no image data available' })
+    }
+
+    // Assuming imageData is stored as a Buffer and needs to be converted to a base64 string for response
+    const imageBase64 = drawingEntry.imageData.toString('base64')
+    res.json({ success: true, imageData: imageBase64 })
+  } catch (error) {
+    console.error('Error fetching image data:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -822,5 +838,6 @@ module.exports = {
   addImage,
   getBookUserIdFromText,
   getDrawing,
-  fetchAllRoomPlayers
+  fetchAllRoomPlayers,
+  getImageData
 }
