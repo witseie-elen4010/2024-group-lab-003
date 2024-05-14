@@ -1,3 +1,7 @@
+// accept URL params
+const queryParams = new URLSearchParams(window.location.search)
+const userEmail = queryParams.get('userEmail')
+
 // Function to handle the room creation logic when the "Create" button is clicked
 function createClicked (nickname) {
   const email = `user_${new Date().getTime()}@example.com` // Generates a unique email

@@ -1,3 +1,7 @@
+// accept URL params
+const queryParams = new URLSearchParams(window.location.search)
+const userEmail = queryParams.get('userEmail')
+
 function joinClicked (roomCode, nickname) {
   if (roomCode.trim() === '' || nickname.trim() === '') {
     window.alert('Please fill in all fields.')

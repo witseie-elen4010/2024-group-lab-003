@@ -13,9 +13,25 @@ async function handleClick () {
   if (hashedInput === hashedPassword) {
     window.location.href = '/logs'
   } else {
-    alert('Incorrect password!')
+    window.alert('Incorrect password!')
   }
+}
+
+// get the user email
+const email = document.getElementById('userEmail').textContent
+console.log(email)
+
+async function goToCreate () {
+  console.log('create clicked')
+  // window.location.href = `/create?userEmail=${encodeURIComponent(email)}`
+  window.location.href = `/create?userEmail=${encodeURIComponent(email)}`
+}
+async function goToJoin () {
+  // window.location.href = `/join?userEmail=${encodeURIComponent(email)}`
+  window.location.href = `/join?userEmail=${encodeURIComponent(email)}`
 }
 
 // Add event listener to the button click event
 document.getElementById('log-button').addEventListener('click', handleClick)
+document.getElementById('createButton').addEventListener('click', goToCreate)
+document.getElementById('joinButton').addEventListener('click', goToJoin)
