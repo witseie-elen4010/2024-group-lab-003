@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error('Error loading textings:', error)
     }
   }
-
+  // Sorting
   // async function sortTableByDate () {
   //   const table = document.getElementById('logsTable').getElementsByTagName('tbody')[0]
   //   const rows = Array.from(table.rows)
