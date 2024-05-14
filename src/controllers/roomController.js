@@ -35,7 +35,6 @@ async function createRoom (req, res) {
       code: roomCode,
       hasStarted: false
     })
-    console.log(roomCode) // Now this should log the actual room code string
     await newRoom.save()
 
     // Create a room player linking the user, room, and nickname
@@ -502,8 +501,6 @@ async function getText (req, res) {
       bookUser: bookUserId
     }).exec() // Fetching the Texting document based on roundId and bookUserId
 
-    console.log(textEntry.textData)
-
     if (!textEntry) {
       return res
         .status(404)
@@ -520,8 +517,8 @@ async function getText (req, res) {
 async function getBookUserIdFromDraw (req, res) {
   const { roundId, drawUserId } = req.params // Extract roundId and textUserId from request parameters
 
-  console.log(roundId)
-  console.log(drawUserId)
+  console.log(`round id: ${roundId}`)
+  console.log(`drawUser id: ${drawUserId}`)
 
   try {
     // Find the Texting entry with the specified roundId and textUserId
@@ -537,6 +534,8 @@ async function getBookUserIdFromDraw (req, res) {
       return res.status(404).json({ success: false, message: 'Book user not found for the provided IDs' })
     }
 
+    console.log(`bookUser id: ${bookUserId}`)
+
     // Respond with the bookUserId
     res.json({
       success: true,
@@ -551,9 +550,6 @@ async function getBookUserIdFromDraw (req, res) {
 
 async function getBookUserIdFromText (req, res) {
   const { roundId, textUserId } = req.params // Extract roundId and textUserId from request parameters
-
-  console.log(roundId)
-  console.log(textUserId)
 
   try {
     // Find the Texting entry with the specified roundId and textUserId
@@ -640,7 +636,6 @@ async function checkAllPlayersReady (req, res) {
 
 async function getPlayersByRoomId (req, res) {
   const roomId = req.params.roomId // Use req.params to access the room ID from the route
-  console.log(`Room ID is ${roomId}`)
   try {
     // First, find the room to ensure it exists
     const roomExists = await Room.findById(roomId)
@@ -689,8 +684,6 @@ async function getRoomRoundsByRoomId (req, res) {
 
 async function getFinalText (req, res) {
   const { roundId, bookUserId } = req.params
-  console.log(`We are now in the DB, with roundId: ${roundId} and bookUserId: ${bookUserId}`)
-
   try {
     const textEntry = await Texting.findOne({
       round: roundId,
@@ -711,8 +704,6 @@ async function getFinalText (req, res) {
 async function addImage (req, res) {
   const { userId, roundId } = req.body
   const imageFile = req.file // Accessed via multer
-
-  console.log(imageFile.buffer)
 
   if (!imageFile) {
     return res.status(400).json({ success: false, message: 'No image file provided' })
@@ -739,31 +730,29 @@ async function addImage (req, res) {
 }
 
 async function getDrawing (req, res) {
-  const { roundId, bookUserId } = req.params // Assuming roundId and bookUserId are passed as URL parameters
-
-  console.log(roundId)
-  console.log(bookUserId)
+  const { roundId, bookUserId } = req.params
 
   try {
     const drawingEntry = await Drawing.findOne({
       round: roundId,
       bookUser: bookUserId
-    }).exec() // Fetching the Texting document based on roundId and bookUserId
-
-    console.log(drawingEntry.imageData)
+    }).exec()
 
     if (!drawingEntry) {
-      return res
-        .status(404)
-        .json({ success: false, message: 'Text entry not found' })
+      return res.status(404).json({ success: false, message: 'Drawing entry not found' })
     }
 
-    res.json({ success: true, imageData: drawingEntry.imageData })
+    // Assuming imageData is stored as a Buffer
+    const base64Image = drawingEntry.imageData.toString('base64')
+    console.log(base64Image)
+
+    res.json({ success: true, imageData: base64Image })
   } catch (error) {
-    console.error('Error fetching text data:', error)
+    console.error('Error fetching drawing data:', error)
     res.status(500).json({ success: false, message: 'Internal server error' })
   }
 }
+
 async function fetchAllRoomPlayers (req, res) {
   try {
     // Then, fetch all players associated with this room and populate user details
@@ -810,6 +799,25 @@ async function getImageData (req, res) {
   }
 }
 
+async function getRoomMetadata (req, res) {
+  const { roomId } = req.params // Assuming the room ID is passed as a URL parameter
+
+  try {
+    const room = await Room.findById(roomId).exec() // Using exec() for cleaner promise handling
+
+    if (!room) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Room not found' })
+    }
+
+    res.json({ success: true, totalRounds: room.numRounds, timeLimit: room.timePerRound })
+  } catch (error) {
+    console.error('Error fetching room started status:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -839,5 +847,6 @@ module.exports = {
   getBookUserIdFromText,
   getDrawing,
   fetchAllRoomPlayers,
-  getImageData
+  getImageData,
+  getRoomMetadata
 }

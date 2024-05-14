@@ -28,8 +28,7 @@
         border: 1px solid #ccc; /* Optional: adds a border to the input box */
         border-radius: 4px; /* Optional: rounds the corners of the input box */
     }
-
-    </style>
+  </style>
 </head>
 <body>
   <div class="containerdes mt-5">
@@ -45,7 +44,11 @@
             <h2 for="inputText" style="width:270px">Describe Picture:</h2>
             <input type="text" class="form-control" id="inputText" style="width:300px" placeholder="Give Your Description">
           </div>
-          <button type="submit" class="btn btn-primary" style="justify-content: center">Submit</button>
+          <button type="submit" class="btn btn-primary" id="endRoundButton" style="justify-content: center">Submit</button>
+          <!-- timer -->
+          <div id="timerBarContainer" style="position: fixed; top: 0; left: 0; width: 100%; background-color: #ddd; z-index: 100;">
+            <div id="timerBar" style="height: 20px; background-color: #3952c3; width: 100%;"></div>
+          </div>
         </form>
       </div>
     </div>

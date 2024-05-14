@@ -1,0 +1,11 @@
+#timerBarContainer {
+    width: 100%;
+    background-color: #ddd;
+  }
+  
+  #timerBar {
+    height: 20px;
+    background-color: #3952c3;
+    width: 0%;
+  }
+  
