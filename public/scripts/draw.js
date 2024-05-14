@@ -257,17 +257,78 @@ function startRound () {
   const canvas = document.getElementById('drawingCanvas')
   const ctx = canvas.getContext('2d')
 
-  // Set up the default pen color and width
+  // Set up the default pen color, width, and shape
   let penColor = '#0000FF'
   let penWidth = 5
   let painting = false
+  let shape = ''
+  let startX; let startY; let isDrawing = false
   let undoStack = []
   let redoStack = []
+  // Button listeners for shapes
+  document.getElementById('drawSquare').addEventListener('click', function () {
+    shape = 'square'
+    painting = false // Temporarily disable free drawing mode
+  })
 
-  canvas.addEventListener('mousedown', startDrawing)
-  canvas.addEventListener('mouseup', finishDrawing)
-  canvas.addEventListener('mousemove', draw)
+  document.getElementById('drawCircle').addEventListener('click', function () {
+    shape = 'circle'
+    painting = false // Temporarily disable free drawing mode
+  })
+
+  let imageData // To store the canvas state
+
+  // Drawing events
+  canvas.addEventListener('mousedown', function (e) {
+    startX = e.offsetX
+    startY = e.offsetY
+    isDrawing = true
+    if (shape) {
+      imageData = ctx.getImageData(0, 0, canvas.width, canvas.height) // Store the canvas state when a shape is to be drawn
+    } else {
+      startDrawing(e) // Start free drawing if no shape is selected
+    }
+  })
+
+  canvas.addEventListener('mousemove', function (e) {
+    if (isDrawing) {
+      if (shape) {
+        ctx.putImageData(imageData, 0, 0) // Restore the canvas to its initial state
+        drawShape(ctx, startX, startY, e.offsetX, e.offsetY) // Draw the new shape position
+      } else if (painting) {
+        draw(e) // Continue free drawing
+      }
+    }
+  })
+
+  canvas.addEventListener('mouseup', function (e) {
+    if (isDrawing) {
+      if (shape) {
+        ctx.putImageData(imageData, 0, 0) // Restore the canvas to its initial state
+        drawShape(ctx, startX, startY, e.offsetX, e.offsetY) // Draw the final shape
+        shape = '' // Reset the shape, revert to default pen mode
+        painting = true // Re-enable free drawing mode
+      }
+      isDrawing = false
+      if (!shape) finishDrawing()
+    }
+  })
+
   canvas.addEventListener('mouseout', stopPainting)
+
+  function drawShape (ctx, x1, y1, x2, y2) {
+    const width = x2 - x1
+    const height = y2 - y1
+    ctx.beginPath() // Begin a new path to draw the shape
+    if (shape === 'square') {
+      ctx.strokeRect(x1, y1, width, height)
+    } else if (shape === 'circle') {
+      const radius = Math.sqrt(width * width + height * height)
+      ctx.arc(x1, y1, radius, 0, Math.PI * 2, true)
+      ctx.stroke()
+    }
+    ctx.closePath() // Close the path
+  }
 
   function startDrawing (e) {
     painting = true
@@ -326,6 +387,7 @@ function startRound () {
   document.querySelector('.large').addEventListener('click', function () {
     penWidth = this.dataset.value
   })
+
   document.getElementById('save').addEventListener('click', saveDrawing)
   document.getElementById('undo').addEventListener('click', undoDrawing)
   document.getElementById('redo').addEventListener('click', redoDrawing)
