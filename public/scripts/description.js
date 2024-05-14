@@ -26,11 +26,22 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log(`Room ID: ${roomId}, User ID: ${userId}, Round: ${round}`)
 
   function setupRoundTimer (duration) {
-    setTimeout(function () {
-      // Assuming you have a button to end the round that can be identified by an ID
-      document.getElementById('endRoundButton').click()
-      console.log('Timer completed, round ending.')
-    }, duration * 1000) // Convert timeLimit to milliseconds
+    const startTime = Date.now() // Record the start time
+    const endTime = startTime + duration * 1000 // Calculate end time in milliseconds
+
+    const timerInterval = setInterval(function () {
+      const now = Date.now()
+      const remaining = endTime - now
+      const width = Math.max(0, (remaining / (duration * 1000)) * 100) // Calculate the width percentage
+
+      document.getElementById('timerBar').style.width = width + '%' // Update the width of the timer bar
+
+      if (remaining <= 0) {
+        clearInterval(timerInterval) // Clear interval when time is up
+        document.getElementById('endRoundButton').click() // Simulate the end round button click
+        console.log('Timer completed, round ending.')
+      }
+    }, 1000) // Update every second
   }
 
   // Check if the round has started
