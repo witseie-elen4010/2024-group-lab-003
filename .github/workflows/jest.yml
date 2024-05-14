@@ -35,3 +35,6 @@ jobs:
         name: jest-test-results
         path: coverage/  # Assuming you're generating test coverage reports
         retention-days: 30
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v2.3.0
+            
