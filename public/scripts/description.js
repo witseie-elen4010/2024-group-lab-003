@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
   let totalRounds
   let timeLimit
 
+  document.getElementById('endRoundButton').style.visibility = 'hidden'
+
   // if not the first round then get room metadata from thr URL
   if (round > 1) {
     totalRounds = getQueryParam('totalRounds')
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loadingGif.style.marginBottom = '20px'
 
     const loadingText = document.createElement('div')
-    loadingText.textContent = 'Waiting For Round To Begin'
+    loadingText.textContent = 'Waiting For Round To Begin...'
     loadingText.style.fontSize = '20px'
     loadingText.style.fontWeight = 'bold'
 
@@ -160,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log(`round id: ${roundId}`)
 
           if (round > 1) {
+            document.getElementById('DescribeText').textContent = 'What Is This Drawing?' // Update the heading text
             console.log(`Got into the if with round: ${round}`)
             fetch(`/api/get-user-book-id-from-text/${roundId}/${userId}`)
               .then(response => {
@@ -240,6 +243,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error fetching round ID for round', round - 1, ':', error)
               })
           } else {
+            // remove image
+            document.getElementById('imageBox').style.visibility = 'hidden'
+            document.getElementById('DescribeText').textContent = 'Start Your Book By Describing Something' // Update the heading text
             // remove loading overlay
             const overlayElement = document.getElementById('waitingOverlay')
             if (overlayElement) {

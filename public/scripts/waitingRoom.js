@@ -198,27 +198,42 @@ document.addEventListener('DOMContentLoaded', async function () {
     settingsView.appendChild(timeLimitSlider)
     settingsView.appendChild(selectedTimeLabel)
 
-    startGameButton.addEventListener('click', function () {
-      // Display a loading screen
-      const overlay = document.createElement('div')
+    let overlay
+    function createWaitingOverlay () {
+      overlay = document.createElement('div')
+      overlay.setAttribute('id', 'waitingOverlay')
       overlay.style.position = 'fixed'
       overlay.style.top = '0'
       overlay.style.left = '0'
       overlay.style.width = '100%'
       overlay.style.height = '100%'
-      overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+      overlay.style.backgroundColor = 'rgba(0, 0, 140, 1)' // Blue semi-transparent background
+      overlay.style.color = 'white'
       overlay.style.display = 'flex'
+      overlay.style.flexDirection = 'column'
       overlay.style.justifyContent = 'center'
       overlay.style.alignItems = 'center'
-      overlay.style.zIndex = '1000' // Ensure it is on top of other elements
+      overlay.style.zIndex = '1500' // Ensure it is on top of other elements
 
       const loadingGif = document.createElement('img')
-      loadingGif.src = './../images/loading15.gif'
-      loadingGif.style.width = '100px'
-      loadingGif.style.height = '100px'
+      loadingGif.src = './../images/roundLoader.gif'
+      loadingGif.alt = 'Loading...'
+      loadingGif.style.width = '80px'
+      loadingGif.style.height = '80px'
+      loadingGif.style.marginBottom = '20px'
+
+      const loadingText = document.createElement('div')
+      loadingText.textContent = 'Starting Game...'
+      loadingText.style.fontSize = '20px'
+      loadingText.style.fontWeight = 'bold'
 
       overlay.appendChild(loadingGif)
+      overlay.appendChild(loadingText)
       document.body.appendChild(overlay)
+    }
+
+    startGameButton.addEventListener('click', function () {
+      createWaitingOverlay()
 
       const numRounds = roundsInput.value
       const timePerRound = timeLimitSlider.value

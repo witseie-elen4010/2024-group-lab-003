@@ -9,6 +9,7 @@ let text
 
 const totalRounds = queryParams.get('totalRounds')
 const timeLimit = queryParams.get('timeLimit')
+document.getElementById('submitDrawing').style.visibility = 'hidden'
 
 console.log(roomId)
 console.log(round)
@@ -40,7 +41,7 @@ function createWaitingOverlay () {
   loadingGif.style.marginBottom = '20px'
 
   const loadingText = document.createElement('div')
-  loadingText.textContent = 'Waiting For Round To Begin'
+  loadingText.textContent = 'Waiting For Round To Begin...'
   loadingText.style.fontSize = '20px'
   loadingText.style.fontWeight = 'bold'
 
