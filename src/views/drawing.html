@@ -20,6 +20,12 @@
         .small { width: 20px; height: 20px; }
         .medium { width: 25px; height: 25px; }
         .large { width: 30px; height: 30px; }
+        .btn-info {
+            color: #333; /* Text color for better contrast */
+            background-color: white;
+            border-color: #ccc; /* Optional: adds a light border for better visibility */
+        }
+        
     </style>
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">
@@ -29,6 +35,10 @@
             <button data-value="5" class="circle-btn small" style="background-color: #555;"></button>
             <button data-value="15" class="circle-btn medium" style="background-color: #555;"></button>
             <button data-value="25" class="circle-btn large" style="background-color: #555;"></button>
+            <button id="drawSquare" class="btn btn-info"><i class="far fa-square"></i></button>  <!-- Outline square icon -->
+            <button id="drawCircle" class="btn btn-info"><i class="far fa-circle"></i></button> <!-- Outline circle icon -->
+
+            <!-- <input type="range" id="penThickness" class="form-range" min="5" max="40" value="5" style="width:100px; border: 2px solid #000000; border-radius: 8px;"> -->
             <input type="color" id="colorPicker" value="#0000FF" class="btn form-control form-control-color">
             <button id="undo" class="btn btn-secondary">
                 <i class="fa fa-undo" aria-hidden="true"></i> Undo
