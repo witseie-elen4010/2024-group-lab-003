@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function () {
   const bookList = document.getElementById('book-list')
-  const roomId = '6642409397753def0c0b80c5' // You will need to set this according to your application's context
-  // const params = new URLSearchParams(window.location.search)
-  // const roomId = params.get('roomId') // Ensure this parameter is passed in the URL
+  // const roomId = '66433cead761ace586048254' // You will need to set this according to your application's context
+  const params = new URLSearchParams(window.location.search)
+  const roomId = params.get('roomId') // Ensure this parameter is passed in the URL
 
   async function fetchPlayers () {
     try {
@@ -39,11 +39,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         for (const [index, round] of data.roundIds.entries()) {
           // Check if the round number is odd: (index + 1) because index is 0-based
           if ((index + 1) % 2 !== 0) {
-            if (index !== 0) continue
             console.log(`Fetching text for Round ID ${round} and Book User ID ${bookId}`)
             await fetchText(round, bookId) // call the fetchText function
           } else {
-            if (index !== 1) continue
             console.log(`Fetching drawing for Round ID ${round} and Book User ID ${bookId}`)
             await fetchImage(round, bookId) // Fetch drawing data
           }
@@ -78,8 +76,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   async function fetchImage (roundId, bookUserId) {
     try {
-      // roundId = '664212391e5396a6ff27f5f7'
-      // bookUserId = '664212381e5396a6ff27f5f4'
       const response = await fetch(`/api/get-image-data/${roundId}/${bookUserId}`)
       if (!response.ok) {
         throw new Error(`HTTP status ${response.status}`)
