@@ -1758,3 +1758,61 @@ describe('getRoomMetadata function', () => {
     })
   })
 })
+
+const { fetchAllDrawings } = require('../src/controllers/roomController')
+
+describe('fetchAllDrawings function', () => {
+  let req, res
+
+  beforeEach(() => {
+    req = {} // No params needed for this function
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('should retrieve and respond with all drawing data', async () => {
+    const mockDrawings = [
+      { createTime: '2021-01-01T00:00:00Z', email: 'user@example.com' }
+    ]
+    Drawing.aggregate.mockResolvedValue(mockDrawings)
+
+    await fetchAllDrawings(req, res)
+
+    expect(Drawing.aggregate).toHaveBeenCalled()
+  })
+})
+
+const { fetchAllTextings } = require('../src/controllers/roomController')
+
+describe('fetchAllTextings function', () => {
+  let req, res
+
+  beforeEach(() => {
+    req = {} // No params needed for this function
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('should retrieve and respond with all texting data', async () => {
+    const mockTextings = [
+      { createTime: '2021-01-01T00:00:00Z', email: 'user@example.com' }
+    ]
+    Texting.aggregate.mockResolvedValue(mockTextings)
+
+    await fetchAllTextings(req, res)
+
+    expect(Texting.aggregate).toHaveBeenCalled()
+  })
+})
