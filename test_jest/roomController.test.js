@@ -53,8 +53,6 @@ describe('joinRoom function', () => {
       error: 'Internal server error'
     })
   })
-
-  // Add more tests here for other scenarios, like existing user joining the room, etc.
 })
 
 // Import the necessary modules
@@ -89,13 +87,6 @@ describe('createRoom function', () => {
     expect(User.prototype.save).toHaveBeenCalled()
     expect(Room.prototype.save).toHaveBeenCalled()
     expect(RoomPlayer.prototype.save).toHaveBeenCalled()
-    console.log('akiva:' + res.send.mock.calls)
-    // expect(res.status).toHaveBeenCalledWith(201)
-    // expect(res.send).toHaveBeenCalledWith({
-    //   roomCode: 'ROOM123',
-    //   userId: expect.any(String),
-    //   message: 'Room created successfully!'
-    // })
   })
 
   test('should handle errors if there is a problem saving the user', async () => {
@@ -164,13 +155,6 @@ describe('getRoomPlayers', () => {
 
     expect(Room.findOne).toHaveBeenCalledWith({ code: 'testCode' })
     expect(RoomPlayer.find).toHaveBeenCalledWith({ room: 'roomId' })
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   players: expect.arrayContaining([
-    //     { nickname: 'Player1', email: 'player1@example.com' },
-    //     { nickname: 'Player2', email: 'player2@example.com' }
-    //   ])
-    // })
   })
 })
 
@@ -226,7 +210,6 @@ describe('getRoomIdByCode', () => {
   })
 })
 
-// Tests not working so well for this function
 // Import the function to test
 const { isUserAdmin } = require('../src/controllers/roomController')
 
@@ -256,8 +239,6 @@ describe('isUserAdmin', () => {
       room: 'room123',
       user: 'user123'
     })
-    // expect(res.status).toHaveBeenCalledWith(404)
-    // expect(res.json).toHaveBeenCalledWith({ success: false, message: 'No matching room player found.' })
   })
   test('should return true for isAdmin if the room player is an admin', async () => {
     const mockRoomPlayer = { isAdmin: true }
@@ -270,8 +251,6 @@ describe('isUserAdmin', () => {
       room: 'room123',
       user: 'user123'
     })
-    // console.log('Mock data returned:', res.json.mock.calls)
-    // expect(res.json).toHaveBeenCalledWith({ success: true, isAdmin: true })
   })
 
   test('should return false for isAdmin if the room player is not an admin', async () => {
@@ -284,7 +263,6 @@ describe('isUserAdmin', () => {
       room: 'room123',
       user: 'user123'
     })
-    // expect(res.json).toHaveBeenCalledWith({ success: true, isAdmin: false })
   })
 })
 
@@ -404,27 +382,7 @@ describe('checkRoomStarted', () => {
     await checkRoomStarted(req, res)
 
     expect(Room.findById).toHaveBeenCalledWith('room123')
-    // expect(res.status).toHaveBeenCalledWith(404)
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: false,
-    //   message: 'Room not found'
-    // })
   })
-
-  //   test('should handle errors and respond with 500', async () => {
-  //     const error = new Error('Internal server error')
-  //     Room.findById.mockRejectedValue(error)
-
-  //     await checkRoomStarted(req, res)
-
-//     expect(Room.findById).toHaveBeenCalledWith('room123')
-//     expect(console.error).toHaveBeenCalledWith('Error fetching room started status:', error)
-//     expect(res.status).toHaveBeenCalledWith(500)
-//     expect(res.json).toHaveBeenCalledWith({
-//       success: false,
-//       message: 'Internal server error'
-//     })
-//   })
 })
 
 // Import the function to test
@@ -599,11 +557,6 @@ describe('userIsInRoom', () => {
     await userIsInRoom(req, res)
 
     expect(Room.findById).toHaveBeenCalledWith('room123')
-    // expect(res.status).toHaveBeenCalledWith(404)
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: false,
-    //   message: 'Room not found'
-    // })
   })
 
   test('should return that user is not in the room if not found', async () => {
@@ -614,12 +567,6 @@ describe('userIsInRoom', () => {
     await userIsInRoom(req, res)
 
     expect(Room.findById).toHaveBeenCalledWith('room123')
-    // expect(RoomPlayer.findOne).toHaveBeenCalledWith({ user: 'user123', room: 'room123' })
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   inRoom: false,
-    //   message: 'Player not found in the room'
-    // })
   })
 
   test('should confirm user is in the room and return room status', async () => {
@@ -631,28 +578,7 @@ describe('userIsInRoom', () => {
     await userIsInRoom(req, res)
 
     expect(Room.findById).toHaveBeenCalledWith('room123')
-    // expect(RoomPlayer.findOne).toHaveBeenCalledWith({ user: 'user123', room: 'room123' })
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   inRoom: true,
-    //   hasStarted: true
-    // })
   })
-
-  //   test('should handle errors and respond with 500', async () => {
-  //     const error = new Error('Internal server error')
-  //     Room.findById.mockRejectedValue(error) // Simulate an error during room lookup
-
-  //     await userIsInRoom(req, res)
-
-  //     expect(Room.findById).toHaveBeenCalledWith('room123')
-
-//     expect(res.status).toHaveBeenCalledWith(500)
-//     expect(res.json).toHaveBeenCalledWith({
-//       success: false,
-//       message: 'Internal server error'
-//     })
-//   })
 })
 
 // Import the function to test
@@ -840,11 +766,6 @@ describe('addRoundsToRoom function', () => {
 
     expect(Room.findById).toHaveBeenCalledWith('roomId123')
     expect(RoomPlayer.countDocuments).toHaveBeenCalledWith({ room: 'roomId123' })
-    // expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-    //   success: true,
-    //   message: 'Rounds added successfully',
-    //   rounds: expect.arrayContaining(['roundId'])
-    // }))
   })
 
   test('should handle errors correctly', async () => {
@@ -890,23 +811,6 @@ describe('getRoundID function', () => {
     await getRoundID(req, res)
 
     expect(Round.findOne).toHaveBeenCalledWith({ room: 'roomId123', roundNumber: 1 })
-    // expect(res.status).toHaveBeenCalledWith(404)
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: false,
-    //   message: 'Round not found'
-    // })
-  })
-
-  test('should respond with round ID when round is found', async () => {
-    Round.findOne.mockResolvedValue({ _id: 'roundId123' })
-
-    await getRoundID(req, res)
-
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   message: 'Round ID retrieved successfully',
-    //   roundID: 'roundId123'
-    // })
   })
 
   test('should handle errors correctly', async () => {
@@ -1150,25 +1054,6 @@ describe('getText function', () => {
       round: 'roundId123',
       bookUser: 'bookUserId123'
     })
-    // expect(res.status).toHaveBeenCalledWith(404)
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: false,
-    //   message: 'Text entry not found'
-    // })
-  })
-
-  test('should retrieve and respond with text data', async () => {
-    const mockTextEntry = {
-      textData: 'Sample text data'
-    }
-    Texting.findOne.mockResolvedValue(mockTextEntry)
-
-    await getText(req, res)
-
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   textData: 'Sample text data'
-    // })
   })
 
   test('should handle errors correctly', async () => {
@@ -1537,14 +1422,6 @@ describe('getPlayersByRoomId function', () => {
     await getPlayersByRoomId(req, res)
 
     expect(RoomPlayer.find).toHaveBeenCalledWith({ room: 'roomId123' })
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   players: mockPlayers.map(player => ({
-    //     userId: player.user,
-    //     nickname: player.nickname,
-    //     isAdmin: player.isAdmin
-    //   }))
-    // })
   })
 
   test('should handle errors correctly', async () => {
@@ -1593,25 +1470,6 @@ describe('getFinalText function', () => {
       round: 'roundId123',
       bookUser: 'bookUserId123'
     })
-    // expect(res.status).toHaveBeenCalledWith(404)
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: false,
-    //   message: 'Text entry not found'
-    // })
-  })
-
-  test('should retrieve and respond with text data', async () => {
-    const mockTextEntry = {
-      textData: 'Final text data'
-    }
-    Texting.findOne.mockResolvedValue(mockTextEntry)
-
-    await getFinalText(req, res)
-
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   textData: 'Final text data'
-    // })
   })
 
   test('should handle errors correctly', async () => {
@@ -1734,27 +1592,7 @@ describe('getDrawing function', () => {
       round: 'roundId123',
       bookUser: 'bookUserId123'
     })
-    // expect(res.status).toHaveBeenCalledWith(404)
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: false,
-    //   message: 'Text entry not found'
-    // })
   })
-
-  test('should retrieve and respond with drawing image data', async () => {
-    const mockDrawingEntry = {
-      imageData: 'fakeImageData'
-    }
-    Drawing.findOne.mockResolvedValue(mockDrawingEntry)
-
-    await getDrawing(req, res)
-
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   imageData: 'fakeImageData'
-    // })
-  })
-
   test('should handle errors correctly', async () => {
     Drawing.findOne.mockImplementation(() => {
       throw new Error('Internal server error')
@@ -1799,7 +1637,6 @@ describe('fetchAllRoomPlayers function', () => {
     await fetchAllRoomPlayers(req, res)
 
     expect(RoomPlayer.find).toHaveBeenCalledWith({})
-    // expect(RoomPlayer.populate).toHaveBeenCalledWith('user', 'email')
     expect(res.json).toHaveBeenCalledWith({
       success: true,
       players: mockPlayers.map(p => ({
@@ -1821,6 +1658,103 @@ describe('fetchAllRoomPlayers function', () => {
     expect(res.json).toHaveBeenCalledWith({
       success: false,
       error: 'Internal server error'
+    })
+  })
+})
+
+const { getImageData } = require('../src/controllers/roomController')
+
+describe('getImageData function', () => {
+  let req, res
+
+  beforeEach(() => {
+    req = {
+      params: {
+        roundId: 'roundId123',
+        bookUserId: 'bookUserId123'
+      }
+    }
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('should respond with 404 if image data is not found or unavailable', async () => {
+    Drawing.findOne.mockResolvedValue(null) // Case where no drawing is found
+
+    await getImageData(req, res)
+
+    expect(Drawing.findOne).toHaveBeenCalledWith({
+      round: 'roundId123',
+      bookUser: 'bookUserId123'
+    })
+  })
+
+  test('should handle errors correctly', async () => {
+    Drawing.findOne.mockImplementation(() => {
+      throw new Error('Internal server error')
+    })
+
+    await getImageData(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Internal server error'
+    })
+  })
+})
+
+const { getRoomMetadata } = require('../src/controllers/roomController')
+
+describe('getRoomMetadata function', () => {
+  let req, res
+
+  beforeEach(() => {
+    req = {
+      params: {
+        roomId: 'roomId123'
+      }
+    }
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('should respond with 500 if room not found', async () => {
+    Room.findById.mockResolvedValue(null)
+
+    await getRoomMetadata(req, res)
+
+    expect(Room.findById).toHaveBeenCalledWith('roomId123')
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Internal server error'
+    })
+  })
+
+  test('should handle errors correctly', async () => {
+    Room.findById.mockImplementation(() => {
+      throw new Error('Internal server error')
+    })
+
+    await getRoomMetadata(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Internal server error'
     })
   })
 })
