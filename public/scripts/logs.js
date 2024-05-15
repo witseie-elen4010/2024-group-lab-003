@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       data.players.forEach(log => {
         const row = table.insertRow()
+
+        // Create a hidden input to store the raw createTime
+        const hiddenInput = document.createElement('input')
+        hiddenInput.type = 'hidden'
+        hiddenInput.value = log.createTime // Store raw createTime
+
         let action = 'No action' // Default action
 
         if (log.isAdmin === true) {
@@ -64,6 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
           return // Skip this iteration if createTime is null or undefined
         }
 
+        // Create a hidden input to store the raw createTime
+        const hiddenInput = document.createElement('input')
+        hiddenInput.type = 'hidden'
+        hiddenInput.value = drawing.createTime // Store raw createTime
+
         const utcDate = new Date(drawing.createTime) // Converts the string to a Date object
         if (isNaN(utcDate.getTime())) {
           console.error('Invalid date:', drawing.createTime)
@@ -108,6 +119,10 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       data.textings.forEach(texting => {
+        // Create a hidden input to store the raw createTime
+        const hiddenInput = document.createElement('input')
+        hiddenInput.type = 'hidden'
+        hiddenInput.value = texting.createTime // Store raw createTime
         // Check if createTime is valid
         if (!texting.createTime) {
           console.error('Invalid createTime:', texting.createTime)
@@ -145,34 +160,23 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error('Error loading textings:', error)
     }
   }
-  // async function sortTableByDate () {
-  //   const table = document.getElementById('logsTable').getElementsByTagName('tbody')[0]
-  //   const rows = Array.from(table.rows)
+  async function sortTableByDate () {
+    const table = document.getElementById('logsTable').getElementsByTagName('tbody')[0]
+    const rows = Array.from(table.rows)
 
-  //   // Parse date and time from the string and compare
-  //   rows.sort((a, b) => {
-  //     const dateTimeA = a.cells[0].innerText.split(' ')
-  //     const dateA = dateTimeA[0].split('-').reverse().join('-')
-  //     const timeA = dateTimeA[1]
-  //     const dateTimeStringA = `${dateA} ${timeA}`
+    // Sort the rows based on the hidden input's value (raw createTime)
+    rows.sort((a, b) => {
+      const dateA = a.cells[0].querySelector('input[type="hidden"]').value
+      const dateB = b.cells[0].querySelector('input[type="hidden"]').value
+      return new Date(dateA) - new Date(dateB)
+    })
 
-  //     const dateTimeB = b.cells[0].innerText.split(' ')
-  //     const dateB = dateTimeB[0].split('-').reverse().join('-')
-  //     const timeB = dateTimeB[1]
-  //     const dateTimeStringB = `${dateB} ${timeB}`
+    // Re-attach rows to the table body in sorted order
+    rows.forEach(row => table.appendChild(row))
+  }
 
-  //     console.log(`Comparing A: ${dateTimeStringA} to B: ${dateTimeStringB}`)
-
-  //     return new Date(dateTimeStringA) - new Date(dateTimeStringB)
-  //   })
-
-  //   // Log the sorted result
-  //   rows.forEach(row => {
-  //     console.log(`Sorted row: ${row.cells[0].innerText}`)
-  //     table.appendChild(row)
-  //   })
-  // }
   populateUserActionsTable()
   loadDrawings()
   loadTextings()
+  sortTableByDate()
 })
