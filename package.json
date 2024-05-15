@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/witseie-elen4010/2024-group-lab-003#readme",
   "dependencies": {
+    "auth0": "^4.4.0",
     "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",

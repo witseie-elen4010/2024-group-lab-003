@@ -52,6 +52,10 @@ router.get('/logs', (req, res) => {
   res.render(path.join(viewsPath, 'logs'))
 })
 
+router.get('/about', (req, res) => {
+  res.render(path.join(viewsPath, 'about'))
+})
+
 router.get('/', function (req, res, next) {
   res.render('/index', {
     title: 'Auth0 Webapp sample Nodejs',
