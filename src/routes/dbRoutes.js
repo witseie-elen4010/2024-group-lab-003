@@ -36,6 +36,8 @@ const { getImageData } = require('../controllers/roomController')
 const { getRoomMetadata } = require('../controllers/roomController')
 const { fetchAllDrawings } = require('../controllers/roomController')
 const { fetchAllTextings } = require('../controllers/roomController')
+const { findOrCreateUser } = require('../controllers/roomController')
+const { getAllUsers } = require('../controllers/roomController')
 const { getRoundIdsByRoom } = require('../controllers/roomController')
 
 router.post('/create-room', createRoom)
@@ -65,12 +67,13 @@ router.get('/get-final-text/:roundId/:bookUserId', getFinalText)
 router.get('/get-user-book-id-from-text/:roundId/:textUserId', getBookUserIdFromText)
 router.get('/get-image-data/:roundId/:bookUserId', getImageData)
 router.get('/get-sorted-round-ids/:roomId', getRoundIdsByRoom)
-
 router.post('/addImageToDrawing', upload.single('image'), addImage)
 router.get('/get-drawing/:roundId/:bookUserId', getDrawing)
 router.get('/get-all-roomplayers', fetchAllRoomPlayers)
 router.get('/get-room-data/:roomId', getRoomMetadata)
 router.get('/get-all-drawings', fetchAllDrawings)
 router.get('/get-all-textings', fetchAllTextings)
+router.post('/find-or-add-user', findOrCreateUser)
+router.get('/get-all-users', getAllUsers)
 
 module.exports = router

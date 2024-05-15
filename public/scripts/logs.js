@@ -105,6 +105,61 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  async function loadUsers () {
+    try {
+      const response = await fetch('/api/get-all-users') // Adjust the API endpoint as needed
+      if (!response.ok) {
+        throw new Error('Failed to load users.')
+      }
+      const data = await response.json()
+
+      const table = document.getElementById('logsTable').getElementsByTagName('tbody')[0]
+      if (!table) {
+        throw new Error('Table not found in the DOM.')
+      }
+
+      data.users.forEach(user => {
+        // Check if createTime is valid
+        if (!user.createTime) {
+          console.error('Invalid createTime:', user.createTime)
+          return // Skip this iteration if createTime is null or undefined
+        }
+
+        // Create a hidden input to store the raw createTime
+        const hiddenInput = document.createElement('input')
+        hiddenInput.type = 'hidden'
+        hiddenInput.value = user.createTime // Store raw createTime
+
+        const utcDate = new Date(user.createTime) // Converts the string to a Date object
+        if (isNaN(utcDate.getTime())) {
+          console.error('Invalid date:', user.createTime)
+          return // Skip this iteration if the date is invalid
+        }
+
+        const options = {
+          timeZone: 'Africa/Johannesburg', // Sets the timezone to South African Time
+          year: 'numeric',
+          month: 'long', // Example: 'May'
+          day: 'numeric',
+          hour: '2-digit', // 24-hour format
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false // Specify whether to use 12-hour time or 24-hour time
+        }
+
+        // Format the date and time according to the specified options
+        const formattedDate = new Intl.DateTimeFormat('en-ZA', options).format(utcDate)
+
+        const row = table.insertRow()
+        row.insertCell(0).textContent = formattedDate
+        row.insertCell(1).textContent = 'User Account Created'
+        row.insertCell(2).textContent = user.email || 'No email provided' // Provide a default email message if none is available
+      })
+    } catch (error) {
+      console.error('Error loading users:', error)
+    }
+  }
+
   async function loadTextings () {
     try {
       const response = await fetch('/api/get-all-textings') // Adjust the API endpoint as needed
@@ -178,5 +233,6 @@ document.addEventListener('DOMContentLoaded', function () {
   populateUserActionsTable()
   loadDrawings()
   loadTextings()
+  loadUsers()
   sortTableByDate()
 })

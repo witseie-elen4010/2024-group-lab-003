@@ -12,50 +12,94 @@
         align-items: center;
         text-align: center;
         justify-content: center;
-        height: 100%;
-        padding-top: 12%;
+        height: 100vh; /* Full viewport height */
+        margin: 0;
     }
     .mb-3 {
         display: flex;
         gap: 10px;
     }
+    .form-control, #DescribeText {
+        width: 450px; /* Max width for input and heading */
+        font-size: 1.5rem;
+    }
     .form-control {
+        padding: 10px 20px; /* Reduced padding */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    .content-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    #timerBarContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #ddd;
+        z-index: 100;
+    }
+    #timerBar {
+        height: 20px;
+        background-color: #3952c3;
         width: 100%;
         padding-top: 20px;
         padding-bottom: 20px;
-        height: 50px; /* Adjust this value to increase the height of the input box */
-        font-size: 1.5rem; /* Adjust this value to increase the text size */
-        border: 1px solid #ccc; /* Optional: adds a border to the input box */
-        border-radius: 4px; /* Optional: rounds the corners of the input box */
+        height: 50px;
+        font-size: 1.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    /* Blue screen overlay */
+    #blueScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 140, 1);
+        z-index: 1000; /* High z-index to cover everything else */
     }
   </style>
 </head>
 <body>
-  <div class="containerdes mt-5">
-    <div class="row mt-5">
-      <div class="col-md-6 offset-md-3">
+  <div id="blueScreen"></div> <!-- Blue screen overlay element -->
+  <div class="containerdes">
+    <div class="row">
+      <div class="col-md-12"> <!-- Expanded column for image -->
         <form>
-          <!-- Image container -->
           <div class="form-group">
-            <img src="your-image-url.jpg" alt="Descriptive Image" class="img-fluid mb-3" id="imageBox">
+            <img src="../../images/draw.gif" alt="Descriptive Image" class="img-fluid mb-3" id="imageBox">
           </div>
           <!-- Text input for description -->
-          <div class="form-group">
-            <h2 for="inputText" id="DescribeText" style="width:270px">Describe Picture:</h2>
-            <input type="text" class="form-control" id="inputText" style="width:300px" placeholder="Give Your Description">
-          </div>
-          <button type="submit" class="btn btn-primary" id="endRoundButton" style="justify-content: center">Submit</button>
-          <!-- timer -->
-          <div id="timerBarContainer" style="position: fixed; top: 0; left: 0; width: 100%; background-color: #ddd; z-index: 100;">
-            <div id="timerBar" style="height: 20px; background-color: #3952c3; width: 100%;"></div>
+          <div class="content-container">
+            <h2 id="DescribeText">Describe The Picture</h2>
+            <div class="form-group" style="display: flex; align-items: center; justify-content: center;">
+                <input type="text" class="form-control" id="inputText" placeholder="Enter Your Description">
+            </div>
+            <button type="submit" class="btn btn-primary" id="endRoundButton">Submit</button>
           </div>
         </form>
       </div>
     </div>
   </div>
+  <div id="timerBarContainer">
+    <div id="timerBar"></div>
+  </div>
   <script src="../../scripts/description.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
