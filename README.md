@@ -43,5 +43,9 @@ Hey, game admins! Want to peek behind the curtain? Access the game logs with the
 ## Why Play?
  
 Because life's too short for boring games. Whether you're the next Picasso or you still draw stick figures, **Doodles All the Way Down** is your playground for laughter, creativity, and some good old-fashioned doodle chaos.
- 
+
 Ready to scribble your way into legend? Let's get doodling!
+
+## Technical Requirements
+
+- Users must be unique. Therefore if you are testing the game on a single computer ensure you log into a different user on each screen!
