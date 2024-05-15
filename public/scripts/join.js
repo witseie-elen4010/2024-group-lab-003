@@ -30,6 +30,7 @@ function joinClicked (roomCode, nickname) {
 }
 
 document.getElementById('joinRoom').addEventListener('click', function () {
+  this.disabled = true
   const roomCode = document.getElementById('roomCode').value
   const nickname = document.getElementById('nickname').value
   joinClicked(roomCode, nickname)

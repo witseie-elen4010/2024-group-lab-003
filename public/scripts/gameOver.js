@@ -64,7 +64,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (data.success) {
         const textBlock = document.createElement('div')
         textBlock.className = 'card mt-2'
-        textBlock.innerHTML = `<div class="card-body">${data.textData}</div>`
+        // Include the nickname in the textBlock
+        textBlock.innerHTML = `<div class="card-body"><strong>${data.nickname} wrote:</strong><br>${data.textData}</div>`
         document.getElementById('right-panel').appendChild(textBlock)
       } else {
         console.error('Fetch successful but API returned an error:', data.message)
@@ -82,7 +83,14 @@ document.addEventListener('DOMContentLoaded', async function () {
       }
       const data = await response.json()
       console.log(`Image Data ${data.imageData}`) // Log the image data
+
       if (data.success) {
+        // Create a text element to display "nickname drew:"
+        const nicknameLabel = document.createElement('div')
+        nicknameLabel.className = 'card-header' // Assign class for styling
+        nicknameLabel.innerText = `${data.nickname} drew:` // Set the text
+        nicknameLabel.style.fontWeight = 'bold' // Make the text bold
+
         // Create an img element using document.createElement
         const image = document.createElement('img')
         image.src = 'data:image/png;base64,' + data.imageData // Set the source of the image
@@ -90,12 +98,13 @@ document.addEventListener('DOMContentLoaded', async function () {
         image.alt = 'Loaded Image' // Alt text for accessibility
 
         // Set the size of the image
-        image.style.width = '400px' // Set the width to 100 pixels
+        image.style.width = '100%' // Set the width to 100% of its container
         image.style.height = 'auto' // Set the height to scale automatically
 
-        // Create a container div element for the image
+        // Create a container div element for the image and text
         const imageCard = document.createElement('div')
         imageCard.className = 'card' // Style the card container
+        imageCard.appendChild(nicknameLabel) // Append the nickname label to the card
         imageCard.appendChild(image) // Append the image to the card
 
         // Append the entire card to a container in your HTML

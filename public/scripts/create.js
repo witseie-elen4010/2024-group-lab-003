@@ -34,6 +34,7 @@ function createClicked (nickname) {
 }
 
 document.getElementById('create').addEventListener('click', () => {
+  this.disabled = true
   const nickname = document.getElementById('nickname').value
   if (nickname.trim() === '') {
     window.alert('Please enter a nickname.')

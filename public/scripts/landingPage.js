@@ -13,7 +13,7 @@ async function handleClick () {
   if (hashedInput === hashedPassword) {
     window.location.href = '/logs'
   } else {
-    alert('Incorrect password!')
+    window.alert('Incorrect password!')
   }
 }
 

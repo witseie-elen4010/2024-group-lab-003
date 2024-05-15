@@ -692,12 +692,27 @@ async function getFinalText (req, res) {
       round: roundId,
       bookUser: bookUserId
     }).exec()
-    console.log(`In Db the textEntry is: ${textEntry.textData}`)
+
+    console.log(`In Db the textEntry is: ${textEntry ? textEntry.textData : 'Not Found'}`)
     if (!textEntry) {
       return res.status(404).json({ success: false, message: 'Text entry not found' })
     }
 
-    res.json({ success: true, textData: textEntry.textData })
+    // Fetch the corresponding roomPlayer using the textUser ID from textEntry
+    const roomPlayer = await RoomPlayer.findOne({
+      user: textEntry.textUser
+    }).exec()
+
+    if (!roomPlayer) {
+      return res.status(404).json({ success: false, message: 'Room player not found' })
+    }
+
+    // Return the textData along with the user's nickname
+    res.json({
+      success: true,
+      textData: textEntry.textData,
+      nickname: roomPlayer.nickname
+    })
   } catch (error) {
     console.error('Error fetching text data:', error)
     res.status(500).json({ success: false, message: 'Internal server error' })
@@ -792,14 +807,31 @@ async function getImageData (req, res) {
       round: roundId,
       bookUser: bookUserId
     }).exec()
+
     console.log('Drawing Entry:', drawingEntry)
+
     if (!drawingEntry || !drawingEntry.imageData) {
       return res.status(404).json({ success: false, message: 'Image not found or no image data available' })
     }
 
+    // Fetch the corresponding roomPlayer using the drawerUser ID from drawingEntry
+    const roomPlayer = await RoomPlayer.findOne({
+      user: drawingEntry.drawerUser
+    }).exec()
+
+    if (!roomPlayer) {
+      return res.status(404).json({ success: false, message: 'Drawer not found' })
+    }
+
     // Assuming imageData is stored as a Buffer and needs to be converted to a base64 string for response
     const imageBase64 = drawingEntry.imageData.toString('base64')
-    res.json({ success: true, imageData: imageBase64 })
+
+    // Return the imageData along with the user's nickname
+    res.json({
+      success: true,
+      imageData: imageBase64,
+      nickname: roomPlayer.nickname
+    })
   } catch (error) {
     console.error('Error fetching image data:', error)
     res.status(500).json({ success: false, message: 'Internal server error' })
@@ -883,6 +915,25 @@ async function fetchAllTextings (req, res) {
   }
 }
 
+async function getRoundIdsByRoom (req, res) {
+  const { roomId } = req.params
+
+  try {
+    const rounds = await Round.find({ room: roomId }).sort({ roundNumber: 1 }).select('_id').exec()
+
+    if (!rounds || rounds.length === 0) {
+      return res.status(404).json({ success: false, message: 'No rounds found for the specified room' })
+    }
+
+    const roundIds = rounds.map(round => round._id)
+
+    res.json({ success: true, roundIds })
+  } catch (error) {
+    console.error('Error fetching round IDs:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -915,5 +966,6 @@ module.exports = {
   getImageData,
   getRoomMetadata,
   fetchAllDrawings,
-  fetchAllTextings
+  fetchAllTextings,
+  getRoundIdsByRoom
 }
