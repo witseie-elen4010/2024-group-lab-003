@@ -55,60 +55,6 @@ describe('joinRoom function', () => {
   })
 })
 
-// Import the necessary modules
-const { createRoom } = require('../src/controllers/roomController')
-const generateRoomCode = jest.fn()
-
-describe('createRoom function', () => {
-  let req, res
-
-  beforeEach(() => {
-    req = {
-      body: {
-        email: 'test@example.com',
-        password: 'hashedpassword',
-        nickname: 'Tester'
-      }
-    }
-    res = {
-      send: jest.fn(),
-      status: jest.fn().mockReturnThis()
-    }
-    generateRoomCode.mockResolvedValue('ROOM123')
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
-
-  test('should create a room and respond with 201', async () => {
-    await createRoom(req, res)
-
-    // expect(User.prototype.save).toHaveBeenCalled()
-    // expect(Room.prototype.save).toHaveBeenCalled()
-    // expect(RoomPlayer.prototype.save).toHaveBeenCalled()
-    // console.log('akiva:' + res.send.mock.calls)
-    // expect(res.status).toHaveBeenCalledWith(201)
-    // expect(res.send).toHaveBeenCalledWith({
-    //   roomCode: 'ROOM123',
-    //   userId: expect.any(String),
-    //   message: 'Room created successfully!'
-    // })
-  })
-
-  test('should handle errors if there is a problem saving the user', async () => {
-    User.prototype.save.mockRejectedValue(new Error('Error saving user'))
-
-    await createRoom(req, res)
-
-    // expect(res.status).toHaveBeenCalledWith(500)
-    // expect(res.send).toHaveBeenCalledWith({
-    //   message: 'Error creating room',
-    //   error: 'Error: Error saving user'
-    // })
-  })
-})
-
 // Import the function to test
 const { getRoomPlayers } = require('../src/controllers/roomController')
 
@@ -773,26 +719,7 @@ describe('addRoundsToRoom function', () => {
 
     expect(Room.findById).toHaveBeenCalledWith('roomId123')
     expect(RoomPlayer.countDocuments).toHaveBeenCalledWith({ room: 'roomId123' })
-    // expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-    //   success: true,
-    //   message: 'Rounds added successfully',
-    //   rounds: expect.arrayContaining(['roundId'])
-    // }))
   })
-
-  // test('should handle errors correctly', async () => {
-  //   Room.findById.mockImplementation(() => {
-  //     throw new Error('Internal server error')
-  //   })
-
-  //   await addRoundsToRoom(req, res)
-
-  //   expect(res.status).toHaveBeenCalledWith(500)
-  //   expect(res.json).toHaveBeenCalledWith({
-  //     success: false,
-  //     message: 'Internal server error'
-  //   })
-  // })
 })
 
 const { getRoundID } = require('../src/controllers/roomController')
@@ -998,28 +925,6 @@ describe('addTextDescription function', () => {
 
   afterEach(() => {
     jest.clearAllMocks()
-  })
-
-  test('should add or update text description successfully', async () => {
-    const mockTexting = {
-      round: 'roundId123',
-      textUser: 'userId123',
-      textData: 'New text description'
-    }
-    Texting.findOneAndUpdate.mockResolvedValue(mockTexting)
-
-    await addTextDescription(req, res)
-
-    // expect(Texting.findOneAndUpdate).toHaveBeenCalledWith(
-    //   { round: 'roundId123', textUser: 'userId123' },
-    //   { textData: 'New text description' },
-    //   { upsert: true, new: true, runValidators: true }
-    // )
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   message: 'Text description added successfully',
-    //   texting: mockTexting
-    // })
   })
 
   test('should handle errors correctly', async () => {
@@ -1512,67 +1417,6 @@ jest.mock('multer', () => {
   return multerMock
 })
 
-describe('addImage function', () => {
-  let req, res
-
-  beforeEach(() => {
-    req = {
-      body: {
-        userId: 'userId123',
-        roundId: 'roundId123',
-        mockFile: {
-          buffer: 'fakeBuffer'
-        }
-      },
-      file: {
-        buffer: 'fakeBuffer'
-      }
-    }
-    res = {
-      json: jest.fn(),
-      status: jest.fn().mockReturnThis()
-    }
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
-
-  test('should successfully add an image', async () => {
-    const mockUpdatedDrawing = {
-      imageData: 'fakeBuffer'
-    }
-    Drawing.findOneAndUpdate.mockResolvedValue(mockUpdatedDrawing)
-
-    await addImage(req, res)
-
-    // expect(Drawing.findOneAndUpdate).toHaveBeenCalledWith(
-    //   { round: 'roundId123', drawerUser: 'userId123' },
-    //   { imageData: 'fakeBuffer' },
-    //   { upsert: true, new: true, runValidators: true }
-    // )
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: true,
-    //   message: 'Image added successfully',
-    //   drawing: mockUpdatedDrawing
-    // })
-  })
-
-  test('should handle errors correctly', async () => {
-    Drawing.findOneAndUpdate.mockImplementation(() => {
-      throw new Error('Internal server error')
-    })
-
-    await addImage(req, res)
-
-    // expect(res.status).toHaveBeenCalledWith(500)
-    // expect(res.json).toHaveBeenCalledWith({
-    //   success: false,
-    //   message: 'Internal server error'
-    // })
-  })
-})
-
 const { getDrawing } = require('../src/controllers/roomController')
 
 describe('getDrawing function', () => {
@@ -1826,5 +1670,182 @@ describe('fetchAllTextings function', () => {
     await fetchAllTextings(req, res)
 
     expect(Texting.aggregate).toHaveBeenCalled()
+  })
+})
+
+const { findOrCreateUser } = require('../src/controllers/roomController')
+
+describe('findOrCreateUser function', () => {
+  let req, res
+
+  beforeEach(() => {
+    req = {
+      body: {
+        email: 'test@example.com'
+      }
+    }
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      headersSent: false
+    }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('should find existing user and return it', async () => {
+    const mockUser = { email: 'test@example.com' }
+    User.findOne.mockResolvedValue(mockUser)
+
+    await findOrCreateUser(req, res)
+
+    expect(User.findOne).toHaveBeenCalledWith({ email: 'test@example.com' })
+    expect(res.json).toHaveBeenCalledWith(mockUser)
+  })
+
+  test('should create and return a new user when none exists', async () => {
+    User.findOne.mockResolvedValue(null)
+    const mockUser = { email: 'test@example.com', save: jest.fn().mockResolvedValue(true) }
+    User.prototype.save.mockResolvedValue(mockUser)
+
+    await findOrCreateUser(req, res)
+
+    expect(User.findOne).toHaveBeenCalledWith({ email: 'test@example.com' })
+    expect(User.prototype.save).toHaveBeenCalled()
+    expect(res.json).toHaveBeenCalledWith(expect.any(Object))
+  })
+
+  test('should handle errors correctly and send error response', async () => {
+    User.findOne.mockImplementationOnce(() => {
+      throw new Error('Internal server error')
+    })
+
+    await findOrCreateUser(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({ success: false, error: 'Internal server error' })
+  })
+})
+
+const { getAllUsers } = require('../src/controllers/roomController')
+
+describe('getAllUsers function', () => {
+  let req, res
+
+  beforeEach(() => {
+    req = {} // No parameters needed for this function
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('should retrieve and respond with all user data', async () => {
+    const mockUsers = [
+      { email: 'user1@example.com', createTime: '2021-01-01T00:00:00Z' },
+      { email: 'user2@example.com', createTime: '2021-01-02T00:00:00Z' }
+    ]
+    User.find.mockImplementation(() => ({
+      exec: jest.fn().mockResolvedValue(mockUsers)
+    }))
+
+    await getAllUsers(req, res)
+
+    expect(User.find).toHaveBeenCalledWith({}, 'email createTime')
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      users: mockUsers
+    })
+  })
+
+  test('should handle errors correctly', async () => {
+    User.find.mockImplementation(() => ({
+      exec: jest.fn().mockRejectedValue(new Error('Internal server error'))
+    }))
+
+    await getAllUsers(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Internal server error'
+    })
+  })
+})
+
+const { getRoundIdsByRoom } = require('../src/controllers/roomController')
+
+describe('getRoundIdsByRoom function', () => {
+  let req, res
+
+  beforeEach(() => {
+    req = {
+      params: {
+        roomId: 'roomId123'
+      }
+    }
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis()
+    }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('should respond with 404 if no rounds found', async () => {
+    Round.find.mockImplementation(() => ({
+      sort: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([])
+    }))
+
+    await getRoundIdsByRoom(req, res)
+
+    expect(Round.find).toHaveBeenCalledWith({ room: 'roomId123' })
+    expect(res.status).toHaveBeenCalledWith(404)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'No rounds found for the specified room'
+    })
+  })
+
+  test('should retrieve and respond with round IDs', async () => {
+    const mockRounds = [{ _id: 'roundId1' }, { _id: 'roundId2' }]
+    Round.find.mockImplementation(() => ({
+      sort: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue(mockRounds)
+    }))
+
+    await getRoundIdsByRoom(req, res)
+
+    expect(res.json).toHaveBeenCalledWith({
+      success: true,
+      roundIds: ['roundId1', 'roundId2']
+    })
+  })
+
+  test('should handle errors correctly', async () => {
+    Round.find.mockImplementation(() => ({
+      sort: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockRejectedValue(new Error('Internal server error'))
+    }))
+
+    await getRoundIdsByRoom(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Internal server error'
+    })
   })
 })

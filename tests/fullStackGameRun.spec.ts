@@ -1,0 +1,100 @@
+import { test, expect } from '@playwright/test'
+
+test('test that a uaser can click the pofile button and view their username', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.getByRole('link', { name: 'Profile' }).click()
+  await page.getByRole('heading', { name: 'User Name: dsad' }).click()
+  await expect(page.getByRole('heading', { name: 'User Name: dsad' })).toBeVisible()
+})
+
+test('test that a uaser can click the pofile button and view their email', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.getByRole('link', { name: 'Profile' }).click()
+  await page.getByRole('heading', { name: 'Email: dsad@gmail.com' }).click()
+  await expect(page.getByRole('heading', { name: 'Email: dsad@gmail.com' })).toBeVisible()
+})
+
+test('test that the user can click the about button and view the about information', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.getByRole('link', { name: 'About' }).click()
+  await page.getByRole('heading', { name: 'Doodles All the Way Down 🌀' }).click()
+})
+
+test('test that a user can click the join button and have an option to join a game', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.getByRole('button', { name: 'Join' }).click()
+  await expect(page.getByRole('heading', { name: 'Join Game' })).toBeVisible()
+})
+
+test('test that the Auth 0 header correctly renders the title', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.getByRole('link', { name: 'Doodles All The Way Down' }).click()
+  await expect(page.getByRole('link', { name: 'Doodles All The Way Down' })).toBeVisible()
+})
+
+test('test that the Auth 0 header correctly renders the home button', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await expect(page.getByRole('link', { name: 'Home' })).toBeVisible()
+})
+
+test('test that the Auth 0 header correctly renders the profile button', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await expect(page.getByRole('link', { name: 'Profile' })).toBeVisible()
+})
+
+test('test that the Auth 0 header correctly renders the logout button', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await expect(page.getByRole('link', { name: 'Logout' })).toBeVisible()
+})
+
+test('test that the Auth 0 header correctly renders the About button', async ({ page }) => {
+  await page.goto('localhost:3000')
+  await page.getByLabel('Email address*').click()
+  await page.getByLabel('Email address*').fill('dsad@gmail.com')
+  await page.getByLabel('Password*').click()
+  await page.getByLabel('Password*').fill('sdfdJJH!!222')
+  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await expect(page.getByRole('link', { name: 'About' })).toBeVisible()
+})
