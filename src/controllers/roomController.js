@@ -61,7 +61,7 @@ async function createRoom (req, res) {
     res.status(500).send({ message: 'Error creating room', error: error.toString() })
   }
 }
-
+// Test
 async function joinRoom (req, res) {
   const { email, roomCode, nickname } = req.body
   try {
