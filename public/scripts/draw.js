@@ -167,6 +167,12 @@ function startRound () {
                           } else {
                             console.error('Overlay not found')
                           }
+                          const blueScreen = document.getElementById('blueScreen')
+                          if (blueScreen) { // Check if the element exists
+                            blueScreen.remove()
+                          } else {
+                            console.error('Element with id "blueScreen" was not found.')
+                          }
                           setupRoundTimer(timeLimit)
                         } else {
                           console.error('Fetch successful but API returned an error for round:', round - 1)

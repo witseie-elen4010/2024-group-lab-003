@@ -54,22 +54,33 @@
         height: 20px;
         background-color: #3952c3;
         width: 100%;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        height: 50px;
+        font-size: 1.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
     }
-    img {
-        max-width: 100%;
-        width: auto;
-        height: auto;
+    /* Blue screen overlay */
+    #blueScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 140, 1);
+        z-index: 1000; /* High z-index to cover everything else */
     }
   </style>
 </head>
 <body>
+  <div id="blueScreen"></div> <!-- Blue screen overlay element -->
   <div class="containerdes">
     <div class="row">
       <div class="col-md-12"> <!-- Expanded column for image -->
         <form>
-          <!-- Image container -->
           <div class="form-group">
-            <img src="../../public/images/draw.gif" alt="Descriptive Image" class="img-fluid mb-3" id="imageBox">
+            <img src="../../images/draw.gif" alt="Descriptive Image" class="img-fluid mb-3" id="imageBox">
           </div>
           <!-- Text input for description -->
           <div class="content-container">

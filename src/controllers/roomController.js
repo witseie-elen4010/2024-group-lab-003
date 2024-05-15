@@ -22,12 +22,56 @@ function generateRandomCode () {
   return result
 }
 
+// async function createRoom (req, res) {
+//   const { email, password, nickname } = req.body
+//   try {
+//     // Create user
+//     const newUser = new User({ email, passwordHash: password }) // Ensure password hashing in practice
+//     await newUser.save()
+
+//     // Generate a unique room code
+//     const roomCode = await generateRoomCode() // Properly await the room code
+//     const newRoom = new Room({
+//       code: roomCode,
+//       hasStarted: false
+//     })
+//     await newRoom.save()
+
+//     // Create a room player linking the user, room, and nickname
+//     const newRoomPlayer = new RoomPlayer({
+//       room: newRoom._id,
+//       user: newUser._id,
+//       nickname,
+//       isAdmin: true
+//     })
+//     await newRoomPlayer.save()
+
+//     // Send roomCode, message, and newUser._id in the response
+//     res
+//       .status(201)
+//       .send({
+//         roomCode: newRoom.code,
+//         userId: newUser._id,
+//         message: 'Room created successfully!'
+//       })
+//   } catch (error) {
+//     console.log(error) // Log the full error for better debugging
+//     res
+//       .status(500)
+//       .send({ message: 'Error creating room', error: error.toString() })
+//   }
+// }
+
 async function createRoom (req, res) {
-  const { email, password, nickname } = req.body
+  const { email, nickname } = req.body
   try {
-    // Create user
-    const newUser = new User({ email, passwordHash: password }) // Ensure password hashing in practice
-    await newUser.save()
+    // Find the user by email
+    const user = await User.findOne({ email })
+
+    // If the user does not exist, return an error
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
 
     // Generate a unique room code
     const roomCode = await generateRoomCode() // Properly await the room code
@@ -40,42 +84,70 @@ async function createRoom (req, res) {
     // Create a room player linking the user, room, and nickname
     const newRoomPlayer = new RoomPlayer({
       room: newRoom._id,
-      user: newUser._id,
+      user: user._id,
       nickname,
       isAdmin: true
     })
     await newRoomPlayer.save()
 
-    // Send roomCode, message, and newUser._id in the response
-    res
-      .status(201)
-      .send({
-        roomCode: newRoom.code,
-        userId: newUser._id,
-        message: 'Room created successfully!'
-      })
+    // Send roomCode, message, and user._id in the response
+    res.status(201).send({
+      roomCode: newRoom.code,
+      userId: user._id,
+      message: 'Room created successfully!'
+    })
   } catch (error) {
     console.log(error) // Log the full error for better debugging
-    res
-      .status(500)
-      .send({ message: 'Error creating room', error: error.toString() })
+    res.status(500).send({ message: 'Error creating room', error: error.toString() })
   }
 }
 
+// async function joinRoom (req, res) {
+//   const { email, password, roomCode, nickname } = req.body
+//   try {
+//     const room = await Room.findOne({ code: roomCode })
+//     if (!room) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: 'Room not found' })
+//     }
+
+//     let user = await User.findOne({ email })
+//     if (!user) {
+//       user = new User({ email, passwordHash: password }) // Assuming password is hashed prior
+//       await user.save()
+//     }
+
+//     const newRoomPlayer = new RoomPlayer({
+//       room: room._id,
+//       user: user._id,
+//       nickname,
+//       isAdmin: false
+//     })
+
+//     await newRoomPlayer.save()
+//     res.json({
+//       success: true,
+//       message: `User ${nickname} joined room ${roomCode}`,
+//       userId: user._id // Include user ID in the response
+//     })
+//   } catch (error) {
+//     console.error('Error joining room:', error)
+//     res.status(500).json({ success: false, error: 'Internal server error' })
+//   }
+// }
+
 async function joinRoom (req, res) {
-  const { email, password, roomCode, nickname } = req.body
+  const { email, roomCode, nickname } = req.body
   try {
     const room = await Room.findOne({ code: roomCode })
     if (!room) {
-      return res
-        .status(404)
-        .json({ success: false, message: 'Room not found' })
+      return res.status(404).json({ success: false, message: 'Room not found' })
     }
 
-    let user = await User.findOne({ email })
+    const user = await User.findOne({ email })
     if (!user) {
-      user = new User({ email, passwordHash: password }) // Assuming password is hashed prior
-      await user.save()
+      return res.status(404).json({ success: false, message: 'User not found' })
     }
 
     const newRoomPlayer = new RoomPlayer({
@@ -883,6 +955,38 @@ async function fetchAllTextings (req, res) {
   }
 }
 
+async function findOrCreateUser (req, res) {
+  const { email } = req.body
+  try {
+    // Try to find the user by email
+    let user = await User.findOne({ email })
+
+    // If user is not found, create a new one
+    if (!user) {
+      user = new User({ email })
+      await user.save()
+    }
+
+    res.json(user) // Return the user in the response
+  } catch (error) {
+    console.error('Error finding or creating user:', error)
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, error: 'Internal server error' })
+    }
+  }
+}
+
+async function getAllUsers (req, res) {
+  try {
+    const users = await User.find({}, 'email createTime').exec() // Fetch all users and project only the email and createTime fields
+
+    res.json({ success: true, users })
+  } catch (error) {
+    console.error('Error fetching users:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -915,5 +1019,7 @@ module.exports = {
   getImageData,
   getRoomMetadata,
   fetchAllDrawings,
-  fetchAllTextings
+  fetchAllTextings,
+  findOrCreateUser,
+  getAllUsers
 }
