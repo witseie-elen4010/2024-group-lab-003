@@ -36,7 +36,7 @@ router.get('/drawing', (req, res) => {
 
 // Waiting Room Page
 router.get('/waitingRoom', (req, res) => {
-  res.render(path.join(viewsPath, 'waitingRoom'))
+  res.sendFile(path.join(viewsPath, 'waitingRoom.html'))
 })
 
 // Description Page
@@ -45,7 +45,7 @@ router.get('/description', (req, res) => {
 })
 
 router.get('/gameOver', (req, res) => {
-  res.sendFile(path.join(viewsPath, 'gameOver.html'))
+  res.render(path.join(viewsPath, 'gameOver'))
 })
 
 router.get('/logs', (req, res) => {

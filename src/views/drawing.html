@@ -25,10 +25,20 @@
             background-color: white;
             border-color: #ccc; /* Optional: adds a light border for better visibility */
         }
-        
+        /* Blue screen overlay */
+        #blueScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 140, 1);
+            z-index: 1000; /* High z-index to cover everything else */
+        }
     </style>
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">
+    <div id="blueScreen"></div> <!-- Blue screen overlay element -->
     <div class="container text-center">
         <h1 id="drawingTitle" class="mb-0" style="padding-bottom:20px">Draw!</h1>
         <div class="toolbar mb-3 d-flex justify-content-center align-items-center" style="gap: 10px;">

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true }
+  createTime: { type: Date, default: Date.now }
 })
 
 const roomSchema = new mongoose.Schema({
