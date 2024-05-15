@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   const cancelGameButton = document.createElement('button')
   const roundsInput = document.createElement('input')
   const roundsLabel = document.createElement('label')
+  const extraInfoDiv = document.getElementById('extraInfo')
+  let numPlayers = 1
 
   // --------------------------------------------------------------------------------------------------
   // Variables for the game
@@ -29,23 +31,29 @@ document.addEventListener('DOMContentLoaded', async function () {
     for (let i = 0; i < numberRounds; i++) {
       let shuffledIDs
 
-      // Check if the shuffled IDs do not match the same column position as the last round
-      do {
-        shuffledIDs = shuffleArray([...userIDs]) // Create a copy of userIDs and shuffle it
+      if (i === 0) {
+        // In the first round, add the userIDs as they are, without shuffling
+        shuffledIDs = [...userIDs]
+      } else {
+        // Starting from the second round, shuffle the IDs
+        do {
+          shuffledIDs = shuffleArray([...userIDs]) // Create a copy of userIDs and shuffle it
 
-        // Ensure it's not the first round and check for column-wise duplication with the previous round
-        if (i > 0 && shuffledIDs.some((id, index) => id === roundTable[i - 1][index])) {
-          continue // If duplication is found, reshuffle
-        }
+          // Ensure no column-wise duplication with the previous round
+          if (shuffledIDs.some((id, index) => id === roundTable[i - 1][index])) {
+            continue // If duplication is found, reshuffle
+          }
 
-        break // If it's the first round or no duplication is found, break the loop
-      } while (true)
+          break // If no duplication is found, break the loop
+        } while (true)
+      }
 
       roundTable.push(shuffledIDs)
     }
 
     return roundTable
   }
+
   // --------------------------------------------------------------------------------------------------
 
   // Create slider elements
@@ -185,10 +193,19 @@ document.addEventListener('DOMContentLoaded', async function () {
     timeLimitSlider.classList.add('form-range')
     timeLimitSlider.min = 10
     timeLimitSlider.max = 60
-    timeLimitSlider.value = 10
+
+    // Set the default value to 30 seconds
+    timeLimitSlider.value = 30
+
+    // Update the label based on the slider's value
     timeLimitSlider.oninput = () => {
       selectedTimeLabel.textContent = timeLimitSlider.value + ' seconds'
+
+      // Add extra info text
+      extraInfoDiv.style.display = 'block' // Make the div visible
     }
+
+    // Initialize the label text with the default value
     selectedTimeLabel.textContent = timeLimitSlider.value + ' seconds'
 
     // Append the elements to the settings view
@@ -233,6 +250,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     startGameButton.addEventListener('click', function () {
+      if (numPlayers < 3) {
+        window.alert('Cannot start the game. At least 3 players are required.')
+        return // Stop the function execution if there aren't enough players
+      }
+      this.disabled = true
       createWaitingOverlay()
 
       const numRounds = roundsInput.value
@@ -241,7 +263,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       setNumRounds(roomId, numRounds)
       setTimePerRound(roomId, timePerRound)
-      const roundIdList = []
+      let roundIdList = []
 
       // First, perform the initial POST request to add round objects.
       fetch(`/api/add-round-objects/${roomId}/${numRounds}`, {
@@ -255,89 +277,69 @@ document.addEventListener('DOMContentLoaded', async function () {
           }
         })
         .then(() => {
-          const fetchPromises = []
-
-          // Generate a list of promises from fetch requests for each round ID.
-          for (let i = 1; i <= numRounds; i++) {
-            const fetchPromise = fetch(`/api/get-round-id/${roomId}/${i}`)
-              .then(response => {
-                if (response.ok) {
-                  return response.json() // Parse the JSON response if successful
-                } else {
-                  throw new Error(`Failed to fetch round ID for round ${i}`) // Throw an error if response not OK
-                }
-              })
-              .then(data => {
-                if (data.success) {
-                  roundIdList.push(data.roundID) // Append the round ID to the list
-                } else {
-                  console.error('Fetch successful but API returned an error for round:', i)
-                }
-              })
-              .catch(error => {
-                console.error('Error fetching round ID for round', i, ':', error)
-              })
-
-            fetchPromises.push(fetchPromise) // Store the promise for later processing
-          }
-
-          // Wait for all the round ID fetch promises to resolve.
-          return Promise.all(fetchPromises)
+          // Get the roundIdList here
+          return fetch(`/api/get-sorted-round-ids/${roomId}`)
         })
-        .then(() => {
-          const kingArthursRoundTable = fillInRoundTable()
-          console.log('All round IDs have been retrieved:', roundIdList)
-          console.log(userIDs)
-          console.log(kingArthursRoundTable)
+        .then(response => {
+          if (response.ok) {
+            return response.json() // Parse the JSON response if successful
+          } else {
+            throw new Error(`Failed to fetch sorted round IDs for room ${roomId}`) // Throw an error if response not OK
+          }
+        })
+        .then(data => {
+          if (data.success) {
+            roundIdList = data.roundIds
 
-          fetch('/api/add-all-texts-and-draws', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              kingArthursRoundTable,
-              roundIdList,
-              userIDs
-            })
-          })
-            .then(response => {
-              if (response.ok) {
-                return response.json() // Parsing the JSON response if successful
-              } else {
-                console.log(response.json())
-                throw new Error('Failed to add all stuff.') // Throw error if response not OK
-              }
-            })
-            .then(data => {
-              fetch(`/api/start-room/${roomId}`, {
-                method: 'POST'
+            // Proceed with the rest of the logic
+            const kingArthursRoundTable = fillInRoundTable()
+            console.log('All round IDs have been retrieved:', roundIdList)
+            console.log(userIDs)
+            console.log(kingArthursRoundTable)
+
+            return fetch('/api/add-all-texts-and-draws', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                kingArthursRoundTable,
+                roundIdList,
+                userIDs
               })
-                .then(response => {
-                  if (response.ok) {
-                    return response.json() // Parsing the JSON response if successful
-                  } else {
-                    throw new Error('Failed to start the game.') // Throw error if response not OK
-                  }
-                })
-                .then(data => {
-                  // console.log('Game started successfully:', data);
-                })
-                .catch(error => {
-                  console.error('Error starting game:', error)
-                  // Optionally inform the user of the failure to start the game
-                  window.alert('Failed to start the game. Please try again.')
-                })
             })
-            .catch(error => {
-              console.error('Error adding all stuff:', error)
-              // Optionally inform the user of the failure to start the game
-              window.alert('Failed to all stuff. Please try again.')
-            })
+          } else {
+            throw new Error('Failed to fetch sorted round IDs.')
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json() // Parsing the JSON response if successful
+          } else {
+            console.log(response.json())
+            throw new Error('Failed to add all stuff.') // Throw error if response not OK
+          }
+        })
+        .then(data => {
+          return fetch(`/api/start-room/${roomId}`, {
+            method: 'POST'
+          })
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json() // Parsing the JSON response if successful
+          } else {
+            throw new Error('Failed to start the game.') // Throw error if response not OK
+          }
+        })
+        .then(data => {
+          // Game started successfully
+          console.log('Game started successfully:', data)
         })
         .catch(error => {
           console.error('Error during operations:', error)
-          window.alert('Failed to add rounds. Please try again.')
+          // Optionally inform the user of the failure to complete the process
+          window.alert('An error occurred. Please try again.')
         })
     })
 
@@ -352,6 +354,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           for (const player of data.players) {
             await removePlayer(player.nickname)
           }
+          this.disabled = true
           console.log('All players removed successfully')
           // Optionally update the UI or redirect the user
         } else {
@@ -465,6 +468,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   function addClickEventToPlayers () {
     document.querySelectorAll('#membersListContainer .list-group-item-action').forEach(item => {
       item.addEventListener('click', function (event) {
+        this.disabled = true
         event.preventDefault()
         const nicknameToRemove = this.getAttribute('data-nickname')
         removePlayer(nicknameToRemove)
@@ -474,6 +478,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   function updatePlayersList (players) {
     userIDs = []
+    numPlayers = players.length
     const playersList = document.getElementById('membersListContainer')
     const list = players
       .map((player, index) => {

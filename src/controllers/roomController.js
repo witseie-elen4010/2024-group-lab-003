@@ -22,46 +22,6 @@ function generateRandomCode () {
   return result
 }
 
-// async function createRoom (req, res) {
-//   const { email, password, nickname } = req.body
-//   try {
-//     // Create user
-//     const newUser = new User({ email, passwordHash: password }) // Ensure password hashing in practice
-//     await newUser.save()
-
-//     // Generate a unique room code
-//     const roomCode = await generateRoomCode() // Properly await the room code
-//     const newRoom = new Room({
-//       code: roomCode,
-//       hasStarted: false
-//     })
-//     await newRoom.save()
-
-//     // Create a room player linking the user, room, and nickname
-//     const newRoomPlayer = new RoomPlayer({
-//       room: newRoom._id,
-//       user: newUser._id,
-//       nickname,
-//       isAdmin: true
-//     })
-//     await newRoomPlayer.save()
-
-//     // Send roomCode, message, and newUser._id in the response
-//     res
-//       .status(201)
-//       .send({
-//         roomCode: newRoom.code,
-//         userId: newUser._id,
-//         message: 'Room created successfully!'
-//       })
-//   } catch (error) {
-//     console.log(error) // Log the full error for better debugging
-//     res
-//       .status(500)
-//       .send({ message: 'Error creating room', error: error.toString() })
-//   }
-// }
-
 async function createRoom (req, res) {
   const { email, nickname } = req.body
   try {
@@ -101,41 +61,6 @@ async function createRoom (req, res) {
     res.status(500).send({ message: 'Error creating room', error: error.toString() })
   }
 }
-
-// async function joinRoom (req, res) {
-//   const { email, password, roomCode, nickname } = req.body
-//   try {
-//     const room = await Room.findOne({ code: roomCode })
-//     if (!room) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: 'Room not found' })
-//     }
-
-//     let user = await User.findOne({ email })
-//     if (!user) {
-//       user = new User({ email, passwordHash: password }) // Assuming password is hashed prior
-//       await user.save()
-//     }
-
-//     const newRoomPlayer = new RoomPlayer({
-//       room: room._id,
-//       user: user._id,
-//       nickname,
-//       isAdmin: false
-//     })
-
-//     await newRoomPlayer.save()
-//     res.json({
-//       success: true,
-//       message: `User ${nickname} joined room ${roomCode}`,
-//       userId: user._id // Include user ID in the response
-//     })
-//   } catch (error) {
-//     console.error('Error joining room:', error)
-//     res.status(500).json({ success: false, error: 'Internal server error' })
-//   }
-// }
 
 async function joinRoom (req, res) {
   const { email, roomCode, nickname } = req.body
@@ -764,12 +689,27 @@ async function getFinalText (req, res) {
       round: roundId,
       bookUser: bookUserId
     }).exec()
-    console.log(`In Db the textEntry is: ${textEntry.textData}`)
+
+    console.log(`In Db the textEntry is: ${textEntry ? textEntry.textData : 'Not Found'}`)
     if (!textEntry) {
       return res.status(404).json({ success: false, message: 'Text entry not found' })
     }
 
-    res.json({ success: true, textData: textEntry.textData })
+    // Fetch the corresponding roomPlayer using the textUser ID from textEntry
+    const roomPlayer = await RoomPlayer.findOne({
+      user: textEntry.textUser
+    }).exec()
+
+    if (!roomPlayer) {
+      return res.status(404).json({ success: false, message: 'Room player not found' })
+    }
+
+    // Return the textData along with the user's nickname
+    res.json({
+      success: true,
+      textData: textEntry.textData,
+      nickname: roomPlayer.nickname
+    })
   } catch (error) {
     console.error('Error fetching text data:', error)
     res.status(500).json({ success: false, message: 'Internal server error' })
@@ -864,14 +804,31 @@ async function getImageData (req, res) {
       round: roundId,
       bookUser: bookUserId
     }).exec()
+
     console.log('Drawing Entry:', drawingEntry)
+
     if (!drawingEntry || !drawingEntry.imageData) {
       return res.status(404).json({ success: false, message: 'Image not found or no image data available' })
     }
 
+    // Fetch the corresponding roomPlayer using the drawerUser ID from drawingEntry
+    const roomPlayer = await RoomPlayer.findOne({
+      user: drawingEntry.drawerUser
+    }).exec()
+
+    if (!roomPlayer) {
+      return res.status(404).json({ success: false, message: 'Drawer not found' })
+    }
+
     // Assuming imageData is stored as a Buffer and needs to be converted to a base64 string for response
     const imageBase64 = drawingEntry.imageData.toString('base64')
-    res.json({ success: true, imageData: imageBase64 })
+
+    // Return the imageData along with the user's nickname
+    res.json({
+      success: true,
+      imageData: imageBase64,
+      nickname: roomPlayer.nickname
+    })
   } catch (error) {
     console.error('Error fetching image data:', error)
     res.status(500).json({ success: false, message: 'Internal server error' })
@@ -987,6 +944,25 @@ async function getAllUsers (req, res) {
   }
 }
 
+async function getRoundIdsByRoom (req, res) {
+  const { roomId } = req.params
+
+  try {
+    const rounds = await Round.find({ room: roomId }).sort({ roundNumber: 1 }).select('_id').exec()
+
+    if (!rounds || rounds.length === 0) {
+      return res.status(404).json({ success: false, message: 'No rounds found for the specified room' })
+    }
+
+    const roundIds = rounds.map(round => round._id)
+
+    res.json({ success: true, roundIds })
+  } catch (error) {
+    console.error('Error fetching round IDs:', error)
+    res.status(500).json({ success: false, message: 'Internal server error' })
+  }
+}
+
 module.exports = {
   getRoomPlayers,
   joinRoom,
@@ -1021,5 +997,6 @@ module.exports = {
   fetchAllDrawings,
   fetchAllTextings,
   findOrCreateUser,
-  getAllUsers
+  getAllUsers,
+  getRoundIdsByRoom
 }
