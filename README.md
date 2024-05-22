@@ -34,7 +34,7 @@ Hello, Doodlers! Strap in for a rollercoaster ride of scribbles, giggles, and mi
  
 ## A Little Something for the Puppet Masters
  
-Hey, game admins! Want to peek behind the curtain? Access the game logs with the super-secret password `123`. But shh, use your powers for good—or for awesome, whichever.
+Hey, game admins! Want to peek behind the curtain? Access the game logs with the super-secret password submitted with the 'Credentials' submission, use your powers for good—or for awesome, whichever.
 
 ## A Few Technical Terms
 
