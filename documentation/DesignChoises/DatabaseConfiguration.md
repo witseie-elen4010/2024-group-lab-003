@@ -27,5 +27,59 @@ While the benefits are significant, the following challenges may arise:
 - **Query Complexity**: The normalized structure may lead to complex queries involving multiple joins, which could affect performance without proper indexing and query optimization.
 - **Setup Demands**: Initial efforts to establish the database structure are substantial, demanding meticulous planning and execution to ensure alignment with the design principles.
 
+- **Structure (Schema)**
+# Database Schema Structure
+
+## User Schema
+| Field       | Type   | Attributes              |
+|-------------|--------|-------------------------|
+| email       | String | required, unique        |
+| createTime  | Date   | default: Date.now       |
+
+## Room Schema
+| Field       | Type   | Attributes              |
+|-------------|--------|-------------------------|
+| code        | String | required, unique        |
+| createTime  | Date   | default: Date.now       |
+| hasStarted  | Boolean| default: false          |
+| numRounds   | Number |                         |
+| timePerRound| Number |                         |
+
+## RoomPlayer Schema
+| Field       | Type                         | Attributes              |
+|-------------|------------------------------|-------------------------|
+| room        | ObjectId (ref: 'Room')       | required                |
+| user        | ObjectId (ref: 'User')       | required                |
+| nickname    | String                       | required                |
+| isAdmin     | Boolean                      | required, default: false|
+| createTime  | Date                         | default: Date.now       |
+
+## Round Schema
+| Field               | Type                 | Attributes              |
+|---------------------|----------------------|-------------------------|
+| room                | ObjectId (ref: 'Room') | required                |
+| roundNumber         | Number               | required                |
+| numberPlayersReady  | Number               | required                |
+| totalPlayers        | Number               | required                |
+
+## Drawing Schema
+| Field       | Type                         | Attributes              |
+|-------------|------------------------------|-------------------------|
+| round       | ObjectId (ref: 'Round')      | required                |
+| bookUser    | ObjectId                     | required                |
+| drawerUser  | ObjectId (ref: 'User')       | required                |
+| imageData   | Buffer                       |                         |
+| createTime  | Date                         |                         |
+
+## Texting Schema
+| Field       | Type                         | Attributes              |
+|-------------|------------------------------|-------------------------|
+| round       | ObjectId (ref: 'Round')      |                         |
+| bookUser    | ObjectId                     | required                |
+| textUser    | ObjectId (ref: 'User')       | required                |
+| textData    | String                       |                         |
+| createTime  | Date                         |                         |
+
+
 ### Conclusion
 The choice to implement the database schema according to Third Normal Form is foundational to our objectives of enhancing performance, maintainability, and scalability. This design framework is pivotal in preparing the system to meet increasing demands and expanding functionalities effectively.
