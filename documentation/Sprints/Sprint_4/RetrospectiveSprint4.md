@@ -11,13 +11,13 @@ This sprint focused on enhancing both functionality and user interface in "Doodl
 - Improved UI for join and create pages.
 - Drawing tools enhancements, such as using prebuilt shapes and customizable pen thickness and style.
 - Features to view game history and end games.
-- Implementing a help menu and remembering user login details.
+- Implementing an about page and remembering user login details.
 - System admin capabilities to view all logs.
 
 ### 2. Sprint Velocity
 | Expected Story Points | Actual Story Points |
 |-----------------------|---------------------|
-| 36                    | 41                  |
+| 39                    | 41                  |
 
 ### 3. What the Team Did Well
 - **UI Improvements**: Successfully enhanced the UI for the waiting room and game pages, and for join and create pages, making the interfaces more intuitive and engaging.
@@ -36,15 +36,16 @@ This sprint focused on enhancing both functionality and user interface in "Doodl
 | Task                                    | Assigned to  | Reviewed by   |
 |-----------------------------------------|--------------|---------------|
 | Create account and login                | Akiva Levitt | Joseph Kaplan |
-| Improve UI for join and create pages    | Jacob Sacks  | Yishai Basserabie |
-| Draw using prebuilt shapes              | Yishai Basserabie | Jacob Sacks |
-| View game history                       | Joseph Kaplan| Akiva Levitt  |
-| Alter pen thickness and style           | Jacob Sacks  | Yishai Basserabie |
+| Improve UI for join and create pages    | Akiva Levitt | Jacob Sacks |
+| Draw using prebuilt shapes              | Joseph Kaplan | Akiva Levitt |
+| View game history                       | Jacob Sacks  | Yishai Basserabie  |
+| Alter pen thickness and style           | Joseph Kaplan  | Akiva Levitt |
 | End game feature                        | Yishai Basserabie | Jacob Sacks |
-| Remember user login                     | Joseph Kaplan| Akiva Levitt  |
-| View all logs for system admin          | Akiva Levitt | Joseph Kaplan |
-| Help menu implementation                | Jacob Sacks  | Yishai Basserabie |
-| UI enhancements for waiting and game rooms | Yishai Basserabie | Jacob Sacks |
+| Remember user login                     | Yishai Basserabie | Jacob Sacks  |
+| View all logs for system admin          | Jacob Sacks | Yishai Basserabie |
+| Meta data of text and drawing for each book| Jacob Sacks  | Yishai Basserabie |
+| About Page and UI enhancements | Akiva Levitt | Joseph Kaplan |
+| View All Loading Screens | Yishai Basserabie | Akiva Levitt |
 
 ### 7. Key Decisions and Discussions
 - **Future Features**: Discussed potential additions for the next sprint, focusing on enhancing interactive elements further and optimizing backend processes.
