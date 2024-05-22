@@ -6,7 +6,7 @@
 3. Jacob Sacks
 4. Joseph Kaplan
 
-
+[![Coverage Status](https://coveralls.io/repos/github/witseie-elen4010/2024-group-lab-003/badge.svg?branch=main)](https://coveralls.io/github/witseie-elen4010/2024-group-lab-003?branch=main)
  
 Hello, Doodlers! Strap in for a rollercoaster ride of scribbles, giggles, and mind-boggling misinterpretations in **Doodles All the Way Down**, the game where your wacky phrases and artistic (or not-so-artistic) skills collide in a spectacularly funny way.
  
