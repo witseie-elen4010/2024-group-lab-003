@@ -35,6 +35,16 @@ Hello, Doodlers! Strap in for a rollercoaster ride of scribbles, giggles, and mi
 ## A Little Something for the Puppet Masters
  
 Hey, game admins! Want to peek behind the curtain? Access the game logs with the super-secret password `123`. But shh, use your powers for good—or for awesome, whichever.
+
+## A Few Technical Terms
+
+- All players begin on the **landing page** where they have the option to create a game and become an **admin player**, join a game and become a **regular player**, or view the logs if they are a **system admin**.
+- If you are a game admin, it is your responsibility to share the **game code** with your friends who will be playing the game with you.
+- Before a game begins, all players will be in the **waiting room**.
+- At the beginning of every game, each player will be asked to write a description, which marks the beginning of their **book**.
+- The admin is able to set the number of **rounds** at the start of the game. This is the sum of the **drawing** and **writing** rounds that a player will play in a single game.
+- At the end of the game, players will be taken to the **Game Over Screen**.
+- On the game over screen, all players have the chance to look back at the game and do a **book review** of all other players' books.
  
 ## Built With
  
